@@ -1,13 +1,12 @@
+import { Box } from '@mui/material';
+import { Form, Formik } from 'formik';
 import { useState } from 'react';
-import { AccountBalanceWallet } from '@mui/icons-material';
-import { AppBar, Box, Toolbar, Typography } from '@mui/material';
-import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+import { AppHeader } from './components/AppHeader';
+import { SummaryCards } from './components/SummaryCards';
 import { TransactionForm } from './components/TransactionForm';
 import { TransactionList } from './components/TransactionList';
-import { SummaryCards } from './components/SummaryCards';
-import type { FormValues } from './types';
-import type { Transaction as TransactionType } from './types';
+import type { FormValues, Transaction as TransactionType } from './types';
 
 interface TransactionItem {
   id: string;
@@ -147,19 +146,7 @@ function App() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ backgroundColor: '#1976d2' }}>
-        <Toolbar>
-          <AccountBalanceWallet sx={{ mr: 2 }} />
-          <Box sx={{ flexGrow: 1 }}>
-            <Typography variant="h6" component="div">
-              Budgeting Budgeteer
-            </Typography>
-            <Typography variant="caption" component="div" sx={{ lineHeight: 1, opacity: 0.8 }}>
-              Track and estimate monthly earnings and spendings for your budget needs
-            </Typography>
-          </Box>
-        </Toolbar>
-      </AppBar>
+      <AppHeader />
 
       <Formik
         initialValues={initialValues}
