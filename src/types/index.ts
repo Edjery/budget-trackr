@@ -36,7 +36,7 @@ export interface TransactionListProps {
   transactions: Transaction[];
 }
 
-export const validationSchema = {
+export const validationSchema = Yup.object().shape({
   year: Yup.number().required('Year is required'),
   month: Yup.number().required('Month is required'),
   dayRangeType: Yup.string()
@@ -51,7 +51,7 @@ export const validationSchema = {
     .max(31, 'Must be at most 31')
     .when('dayRangeType', {
       is: 'multiple',
-      then: (schema: any) => schema.required('End day is required for multiple days'),
+      then: (schema) => schema.required('End day is required for multiple days'),
     }),
   items: Yup.array()
     .of(
@@ -67,4 +67,4 @@ export const validationSchema = {
       })
     )
     .min(1, 'At least one transaction item is required'),
-};
+});

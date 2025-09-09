@@ -1,105 +1,77 @@
-import { Box } from "@mui/material";
-import { Form, Formik } from "formik";
-import { useState } from "react";
-import { validationSchema, type FormValues, type Transaction, type TransactionItem } from "../types";
-import { SummaryCards } from "./SummaryCards";
-import TransactionForm from "./TransactionForm";
-import { TransactionList } from "./TransactionList";
-
-type AppFormValues = Omit<FormValues, "items"> & {
-    items: TransactionItem[];
-};
-
-const currentYear = new Date().getFullYear();
-const currentMonth = new Date().getMonth() + 1;
-const currentDay = new Date().getDate();
-const initialValues: FormValues = {
-    year: currentYear,
-    month: currentMonth,
-    dayRangeType: "single",
-    startDay: currentDay,
-    endDay: currentDay,
-    items: [
-        {
-            id: Date.now().toString(),
-            type: "spendings",
-            name: "",
-            amount: "",
-        },
-    ],
-};
+import { Box } from '@mui/material';
+import { Form, Formik } from 'formik';
+import { useState } from 'react';
+import { validationSchema, type FormValues, type Transaction } from '../types';
+import { useTransactionForm } from '../hooks/useTransactionForm';
+import { toLocalDateString } from '../utils/dateUtils';
+import { SummaryCards } from './SummaryCards';
+import TransactionForm from './TransactionForm';
+import { TransactionList } from './TransactionList';
 
 const AppContent = () => {
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { getInitialValues, createEmptyTransactionItem, resetFormValues } = useTransactionForm();
+  const initialValues = getInitialValues();
 
-    const handleSubmit = (values: AppFormValues, { resetForm }: { resetForm: (values?: any) => void }): void => {
-        const newTransactions: Transaction[] = [];
-        const month = values.month - 1; // JavaScript months are 0-indexed
-
-        const toLocalDateString = (year: number, month: number, day: number): string => {
-            const date = new Date(year, month, day);
-            const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-            return localDate.toISOString().split("T")[0];
-        };
-
-        if (values.dayRangeType === "single") {
-            const dateStr = toLocalDateString(values.year, month, values.startDay);
-            values.items.forEach((item) => {
-                if (item.name && item.amount) {
-                    newTransactions.push({
-                        ...item,
-                        date: dateStr,
-                        month: values.month,
-                        year: values.year,
-                    });
-                }
-            });
-        } else {
-            for (let day = values.startDay; day <= values.endDay; day++) {
-                const dateStr = toLocalDateString(values.year, month, day);
-                values.items.forEach((item) => {
-                    if (item.name && item.amount) {
-                        newTransactions.push({
-                            ...item,
-                            date: dateStr,
-                            month: values.month,
-                            year: values.year,
-                        });
-                    }
-                });
-            }
-        }
-
-        if (newTransactions.length > 0) {
-            setTransactions((prev: Transaction[]) => [...prev, ...newTransactions]);
-        }
-
-        // Reset form after successful submission
-        resetForm({
-            year: values.year,
-            month: values.month,
-            dayRangeType: "single",
-            startDay: values.startDay,
-            endDay: values.endDay,
-            items: [
-                {
-                    id: Date.now().toString(),
-                    type: "spendings" as const,
-                    name: "",
-                    amount: "",
-                },
-            ],
+  const processTransactionItems = (values: FormValues): Transaction[] => {
+    const newTransactions: Transaction[] = [];
+    
+    const addTransaction = (dateStr: string, item: typeof values.items[0]) => {
+      if (item.name && item.amount) {
+        newTransactions.push({
+          ...item,
+          date: dateStr,
+          month: values.month,
+          year: values.year,
         });
+      }
     };
 
-    // Calculate totals with proper type safety
-    const totalEarnings = transactions
-        .filter((t: Transaction) => t.type === "earnings")
-        .reduce((sum: number, t: Transaction) => sum + parseFloat(t.amount || "0"), 0);
+    if (values.dayRangeType === 'single') {
+      const dateStr = toLocalDateString(values.year, values.month, values.startDay);
+      values.items.forEach(item => addTransaction(dateStr, item));
+    } else {
+      for (let day = values.startDay; day <= values.endDay; day++) {
+        const dateStr = toLocalDateString(values.year, values.month, day);
+        values.items.forEach(item => addTransaction(dateStr, item));
+      }
+    }
 
-    const totalSpendings = transactions
-        .filter((t: Transaction) => t.type === "spendings")
-        .reduce((sum: number, t: Transaction) => sum + parseFloat(t.amount || "0"), 0);
+    return newTransactions;
+  };
+
+  const handleSubmit = async (
+    values: FormValues, 
+    { resetForm }: { resetForm: (values?: any) => void }
+  ): Promise<void> => {
+    const newTransactions = processTransactionItems(values);
+    
+    if (newTransactions.length > 0) {
+      setTransactions(prev => [...prev, ...newTransactions]);
+    }
+
+    resetForm({
+      ...resetFormValues(values),
+      items: [createEmptyTransactionItem()]
+    });
+  };
+
+  const calculateTotals = () => {
+    return transactions.reduce(
+      (acc, t) => {
+        const amount = parseFloat(t.amount || '0');
+        if (t.type === 'earnings') {
+          acc.earnings += amount;
+        } else {
+          acc.spendings += amount;
+        }
+        return acc;
+      },
+      { earnings: 0, spendings: 0 }
+    );
+  };
+
+  const { earnings: totalEarnings, spendings: totalSpendings } = calculateTotals();
 
     return (
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
