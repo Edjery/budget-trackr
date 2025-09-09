@@ -47,11 +47,15 @@ export const validationSchema = Yup.object().shape({
     .max(31, 'Must be at most 31')
     .required('Start day is required'),
   endDay: Yup.number()
-    .min(Yup.ref('startDay'), 'End day must be after or equal to start day')
-    .max(31, 'Must be at most 31')
     .when('dayRangeType', {
       is: 'multiple',
-      then: (schema) => schema.required('End day is required for multiple days'),
+      then: (schema) => schema
+        .required('End day is required for multiple days')
+        .min(Yup.ref('startDay'), 'End day must be after or equal to start day')
+        .max(31, 'Must be at most 31'),
+      otherwise: (schema) => schema
+        .default(undefined)
+        .notRequired()
     }),
   items: Yup.array()
     .of(

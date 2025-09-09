@@ -44,14 +44,20 @@ const AppContent = () => {
     values: FormValues, 
     { resetForm }: { resetForm: (values?: any) => void }
   ): Promise<void> => {
-    const newTransactions = processTransactionItems(values);
+    // Ensure endDay matches startDay when dayRangeType is 'single'
+    const formValues = {
+      ...values,
+      endDay: values.dayRangeType === 'single' ? values.startDay : values.endDay
+    };
+
+    const newTransactions = processTransactionItems(formValues);
     
     if (newTransactions.length > 0) {
       setTransactions(prev => [...prev, ...newTransactions]);
     }
 
     resetForm({
-      ...resetFormValues(values),
+      ...resetFormValues(formValues),
       items: [createEmptyTransactionItem()]
     });
   };
