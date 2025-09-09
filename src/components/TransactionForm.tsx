@@ -5,6 +5,10 @@ import { FieldArray, useFormikContext } from 'formik';
 import type { FormValues, TransactionItem } from '../types';
 import { useCallback, useEffect, useMemo, memo } from 'react';
 
+interface TransactionFormProps {
+  isSubmitting: boolean;
+}
+
 interface CustomSelectChangeEvent {
   target: {
     name: string;
@@ -14,7 +18,7 @@ interface CustomSelectChangeEvent {
   stopPropagation: () => void;
 }
 
-export const TransactionForm = () => {
+export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }) => {
   const { values, errors, touched, handleChange, handleBlur, setFieldValue } = useFormikContext<FormValues>();
   const currentYear = new Date().getFullYear();
 
@@ -207,6 +211,7 @@ export const TransactionForm = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   label="End Day"
+                  disabled={isSubmitting}
                 >
                 {days
                   .filter((day) => day >= values.startDay)
@@ -235,6 +240,7 @@ export const TransactionForm = () => {
             startIcon={<AddIcon />}
             onClick={handleAddItem}
             size="small"
+            disabled={isSubmitting}
           >
             Add Item
           </Button>
@@ -262,6 +268,7 @@ export const TransactionForm = () => {
                             value={item.name}
                             onChange={handleChange}
                             onBlur={handleBlur}
+                            disabled={isSubmitting}
                           />
                           {touched.items?.[index]?.name && 
                           typeof errors.items?.[index] === 'object' && 
@@ -289,6 +296,7 @@ export const TransactionForm = () => {
                             onBlur={handleBlur}
                             label="Type"
                             size="small"
+                            disabled={isSubmitting}
                           >
                             <MenuItem value="earnings">Earnings</MenuItem>
                             <MenuItem value="spendings">Spendings</MenuItem>
@@ -321,6 +329,7 @@ export const TransactionForm = () => {
                             inputProps={{ step: '0.01', min: '0.01' }}
                             fullWidth
                             size="small"
+                            disabled={isSubmitting}
                           />
                           {touched.items?.[index]?.amount && 
                           typeof errors.items?.[index] === 'object' && 
@@ -339,7 +348,7 @@ export const TransactionForm = () => {
                           color="error"
                           size="small"
                           onClick={() => handleRemoveItem(index)}
-                          disabled={values.items.length <= 1}
+                          disabled={values.items.length <= 1 || isSubmitting}
                           sx={{ minWidth: 'auto' }}
                         >
                           <RemoveIcon />
@@ -355,6 +364,7 @@ export const TransactionForm = () => {
                   variant="outlined"
                   startIcon={<AddIcon />}
                   onClick={handleAddItem}
+                  disabled={isSubmitting}
                 >
                   Add Item
                 </Button>
@@ -364,7 +374,7 @@ export const TransactionForm = () => {
                   variant="contained"
                   color="primary"
                   size="large"
-                  disabled={values.items.length === 0}
+                  disabled={values.items.length === 0 || isSubmitting}
                 >
                   Save Transaction{values.dayRangeType === 'single' ? '' : 's'}
                 </Button>
