@@ -1,3 +1,5 @@
+import * as Yup from 'yup';
+
 export interface TransactionItem {
   id: string;
   type: 'earnings' | 'spendings';
@@ -33,8 +35,6 @@ export interface TransactionFormProps {
 export interface TransactionListProps {
   transactions: Transaction[];
 }
-
-import * as Yup from 'yup';
 
 export const validationSchema = {
   year: Yup.number().required('Year is required'),
