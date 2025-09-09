@@ -8,6 +8,6 @@ export const getCurrentDateValues = () => {
 };
 
 export const toLocalDateString = (year: number, month: number, day: number): string => {
-  const date = new Date(year, month - 1, day);
-  return date.toISOString().split('T')[0];
+  const pad = (num: number) => num.toString().padStart(2, '0');
+  return `${year}-${pad(month)}-${pad(day)}`;
 };
