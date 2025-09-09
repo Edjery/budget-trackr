@@ -25,6 +25,7 @@ export interface FormValues {
 export interface SummaryCardsProps {
   totalEarnings: number;
   totalSpendings: number;
+  balance: number;
 }
 
 export interface TransactionFormProps {
