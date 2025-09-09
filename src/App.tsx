@@ -140,9 +140,14 @@ function App() {
       <AppBar position="static" sx={{ backgroundColor: '#1976d2' }}>
         <Toolbar>
           <AccountBalanceWallet sx={{ mr: 2 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Budget Trackr
-          </Typography>
+          <Box sx={{ flexGrow: 1 }}>
+            <Typography variant="h6" component="div">
+              Budgeting Budgeteer
+            </Typography>
+            <Typography variant="caption" component="div" sx={{ lineHeight: 1, opacity: 0.8 }}>
+              Track and estimate monthly earnings and spendings for your budget needs
+            </Typography>
+          </Box>
         </Toolbar>
       </AppBar>
 
