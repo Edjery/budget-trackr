@@ -1,5 +1,10 @@
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 import { useState } from "react";
 import { useTransactionCalculations } from "../hooks/useTransactionCalculations";
 import { useTransactionEdit } from "../hooks/useTransactionEdit";
@@ -11,22 +16,40 @@ import { SummaryCards } from "./SummaryCards";
 import TransactionFormDialog from "./TransactionFormDialog";
 import { TransactionList } from "./TransactionList";
 
+interface DateRange {
+    start: Dayjs | null;
+    end: Dayjs | null;
+}
+
 const AppContent = () => {
     const { createEmptyTransactionItem } = useTransactionForm();
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
-    const [searchDate, setSearchDate] = useState<Dayjs | null>(null);
+    const [dateRange, setDateRange] = useState<DateRange>({
+        start: null,
+        end: null,
+    });
 
     const { transactions, updateTransaction, addTransaction, deleteTransaction } = useTransactions();
 
-    // Filter transactions based on searchDate if provided
-    const filteredTransactions = searchDate
-        ? transactions.filter((tx) => {
-              const txDate = dayjs(tx.date).startOf("day");
-              const searchDateStart = searchDate.startOf("day");
-              return txDate.isSame(searchDateStart, "day");
-          })
-        : transactions;
+    // Filter transactions based on date range if provided
+    const filteredTransactions =
+        dateRange.start || dateRange.end
+            ? transactions.filter((tx) => {
+                  const txDate = dayjs(tx.date);
+                  const startDate = dateRange.start?.startOf("day");
+                  const endDate = dateRange.end?.endOf("day");
+
+                  if (startDate && endDate) {
+                      return txDate.isSameOrAfter(startDate, "day") && txDate.isSameOrBefore(endDate, "day");
+                  } else if (startDate) {
+                      return txDate.isSameOrAfter(startDate, "day");
+                  } else if (endDate) {
+                      return txDate.isSameOrBefore(endDate, "day");
+                  }
+                  return true;
+              })
+            : transactions;
 
     const { totalEarnings, totalSpendings, balance } = useTransactionCalculations(filteredTransactions);
 
@@ -62,7 +85,7 @@ const AppContent = () => {
         <>
             <SummaryCards totalEarnings={totalEarnings} totalSpendings={totalSpendings} balance={balance} />
 
-            <DateSearchBar selectedDate={searchDate} onDateChange={setSearchDate} />
+            <DateSearchBar dateRange={dateRange} onDateChange={setDateRange} />
 
             <TransactionList
                 transactions={filteredTransactions}
