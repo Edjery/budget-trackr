@@ -4,6 +4,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Card, CardContent, Collapse, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 import type { Transaction } from "../types";
+import { TransactionCard } from "./TransactionCard";
 import TransactionDetailsDialog from "./TransactionDetailsDialog";
 
 interface TransactionListProps {
@@ -13,24 +14,22 @@ interface TransactionListProps {
 }
 
 export const TransactionList = ({ transactions, onEditTransaction, onAddTransaction }: TransactionListProps) => {
-    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const handleCardClick = (transaction: Transaction) => {
-        setSelectedTransaction(transaction);
+    const handleCardClick = (date: string) => {
+        setSelectedDate(date);
         setIsDialogOpen(true);
     };
 
     const handleCloseDetailsDialog = () => {
         setIsDialogOpen(false);
-        setTimeout(() => setSelectedTransaction(null), 300); // Wait for dialog animation
+        setTimeout(() => setSelectedDate(null), 300);
     };
 
-    const handleEdit = () => {
-        if (selectedTransaction && onEditTransaction) {
-            onEditTransaction(selectedTransaction);
-            handleCloseDetailsDialog();
-        }
+    const handleEdit = (transaction: Transaction) => {
+        onEditTransaction?.(transaction);
+        handleCloseDetailsDialog();
     };
 
     const handleOpenAddDialog = onAddTransaction || (() => {});
@@ -85,158 +84,37 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                 </Typography>
                             </Card>
                         </Grid>
-                        {transactions.length === 0 ? null : (
-                            <>
-                                {Object.entries(groupedTransactions)
-                                    .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
-                                    .map(([date, dateTransactions]) => {
-                                        const total = calculateTotal(dateTransactions);
-                                        return (
-                                            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={date}>
-                                                <Card
-                                                    variant="outlined"
-                                                    sx={{
-                                                        height: "100%",
-                                                        maxHeight: "15rem",
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        bgcolor: "background.paper",
-                                                        transition: "all 0.2s ease-in-out",
-                                                        "&:hover": {
-                                                            boxShadow: 3,
-                                                            transform: "translateY(-2px)",
-                                                        },
-                                                        cursor: "pointer",
-                                                    }}
-                                                    onClick={() => {
-                                                        if (dateTransactions.length > 0) {
-                                                            handleCardClick(dateTransactions[0]);
-                                                        }
-                                                    }}
-                                                >
-                                                    {/* Header with Date */}
-                                                    <Box
-                                                        sx={{
-                                                            p: 2,
-                                                            pb: 1,
-                                                            borderBottom: "1px solid",
-                                                            borderColor: "divider",
-                                                        }}
-                                                    >
-                                                        <Typography
-                                                            variant="subtitle1"
-                                                            fontWeight="medium"
-                                                            color="primary"
-                                                        >
-                                                            {new Date(date).toLocaleDateString("en-PH", {
-                                                                year: "numeric",
-                                                                month: "long",
-                                                                day: "numeric",
-                                                            })}
-                                                        </Typography>
-                                                    </Box>
-                                                    {/* Scrollable Content */}
-                                                    <Box
-                                                        sx={{
-                                                            flex: "1 1 auto",
-                                                            overflowY: "auto",
-                                                            p: 2,
-                                                            "&::-webkit-scrollbar": {
-                                                                width: "6px",
-                                                            },
-                                                            "&::-webkit-scrollbar-track": {
-                                                                background: "transparent",
-                                                            },
-                                                            "&::-webkit-scrollbar-thumb": {
-                                                                background: "#888",
-                                                                borderRadius: "4px",
-                                                                "&:hover": {
-                                                                    background: "#555",
-                                                                },
-                                                            },
-                                                        }}
-                                                    >
-                                                        <Box
-                                                            sx={{
-                                                                display: "flex",
-                                                                flexDirection: "column",
-                                                                gap: 1,
-                                                                mb: 1,
-                                                            }}
-                                                        >
-                                                            {dateTransactions.map((transaction) => (
-                                                                <Box
-                                                                    key={transaction.id}
-                                                                    sx={{
-                                                                        display: "flex",
-                                                                        justifyContent: "space-between",
-                                                                        alignItems: "center",
-                                                                        py: 0.5,
-                                                                    }}
-                                                                >
-                                                                    <Typography variant="body2">
-                                                                        {transaction.name}
-                                                                    </Typography>
-                                                                    <Typography
-                                                                        variant="body2"
-                                                                        color={
-                                                                            transaction.type === "earnings"
-                                                                                ? "success.main"
-                                                                                : "error.main"
-                                                                        }
-                                                                        fontWeight="medium"
-                                                                    >
-                                                                        {transaction.type === "earnings" ? "+" : "-"}$
-                                                                        {parseFloat(transaction.amount).toFixed(2)}
-                                                                    </Typography>
-                                                                </Box>
-                                                            ))}
-                                                        </Box>
-                                                    </Box>
-                                                    {/* Fixed Footer with Total */}
-                                                    <Box
-                                                        sx={{
-                                                            p: 2,
-                                                            bgcolor: "background.paper",
-                                                            borderTop: "1px solid",
-                                                            borderColor: "divider",
-                                                            display: "flex",
-                                                            justifyContent: "space-between",
-                                                            alignItems: "center",
-                                                            zIndex: 1,
-                                                            boxShadow: "0 -2px 8px rgba(0,0,0,0.05)",
-                                                        }}
-                                                    >
-                                                        <Typography variant="subtitle2" fontWeight="bold">
-                                                            Total:
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="subtitle1"
-                                                            fontWeight="bold"
-                                                            color={total >= 0 ? "success.main" : "error.main"}
-                                                        >
-                                                            {total >= 0 ? "+" : "-"} ${Math.abs(total).toFixed(2)}
-                                                        </Typography>
-                                                    </Box>
-                                                </Card>
-                                            </Grid>
-                                        );
-                                    })}
-                            </>
+                        {transactions.length === 0 ? (
+                            <Grid size={{ xs: 12 }}>
+                                <Typography>No transactions yet. Add your first transaction!</Typography>
+                            </Grid>
+                        ) : (
+                            Object.entries(groupedTransactions)
+                                .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
+                                .map(([date, dateTransactions]) => (
+                                    <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={date}>
+                                        <TransactionCard
+                                            date={date}
+                                            transactions={dateTransactions}
+                                            onTransactionClick={() => handleCardClick(date)}
+                                        />
+                                    </Grid>
+                                ))
                         )}
                     </Grid>
                 </CardContent>
             </Card>
             <DebugView data={transactions} />
-
-            <TransactionDetailsDialog
-                open={isDialogOpen}
-                onClose={handleCloseDetailsDialog}
-                transaction={selectedTransaction}
-                onEdit={handleEdit}
-                onAddTransaction={onAddTransaction}
-                transactions={transactions}
-            />
+            {selectedDate && (
+                <TransactionDetailsDialog
+                    open={isDialogOpen}
+                    onClose={handleCloseDetailsDialog}
+                    transaction={{ date: selectedDate } as Transaction}
+                    onEdit={onEditTransaction}
+                    onAddTransaction={onAddTransaction}
+                    transactions={transactions}
+                />
+            )}
         </>
     );
 };
@@ -251,24 +129,30 @@ const DebugView = ({ data }: { data: any }) => {
                 startIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 size="small"
                 color="primary"
+                variant="outlined"
+                sx={{ mb: 1 }}
             >
                 {expanded ? "Hide Debug Data" : "Show Debug Data"}
             </Button>
             <Collapse in={expanded}>
-                <pre
-                    style={{
-                        marginTop: "1rem",
-                        padding: "1rem",
-                        background: "#f5f5f5",
-                        borderRadius: "4px",
+                <Box
+                    component="pre"
+                    sx={{
+                        p: 2,
+                        bgcolor: "background.default",
+                        borderRadius: 1,
+                        border: "1px solid",
+                        borderColor: "divider",
                         overflowX: "auto",
-                        fontSize: "0.875rem",
+                        fontSize: "0.75rem",
+                        fontFamily: "monospace",
+                        maxHeight: "400px",
                         whiteSpace: "pre-wrap",
                         wordWrap: "break-word",
                     }}
                 >
                     {JSON.stringify(data, null, 2)}
-                </pre>
+                </Box>
             </Collapse>
         </Box>
     );
