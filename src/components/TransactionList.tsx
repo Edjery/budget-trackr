@@ -59,6 +59,7 @@ export const TransactionList = ({
                                 onClick={handleOpenAddDialog}
                                 sx={{
                                     height: "100%",
+                                    minHeight: "14rem",
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "center",
@@ -78,23 +79,19 @@ export const TransactionList = ({
                                 </Typography>
                             </Card>
                         </Grid>
-                        {transactions.length === 0 ? (
-                            <Grid size={{ xs: 12 }}>
-                                <Typography>No transactions yet. Add your first transaction!</Typography>
-                            </Grid>
-                        ) : (
-                            Object.entries(groupedTransactions)
-                                .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
-                                .map(([date, dateTransactions]) => (
-                                    <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={date}>
-                                        <TransactionCard
-                                            date={date}
-                                            transactions={dateTransactions}
-                                            onTransactionClick={() => handleCardClick(date)}
-                                        />
-                                    </Grid>
-                                ))
-                        )}
+                        {transactions.length === 0
+                            ? null
+                            : Object.entries(groupedTransactions)
+                                  .sort(([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime())
+                                  .map(([date, dateTransactions]) => (
+                                      <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={date}>
+                                          <TransactionCard
+                                              date={date}
+                                              transactions={dateTransactions}
+                                              onTransactionClick={() => handleCardClick(date)}
+                                          />
+                                      </Grid>
+                                  ))}
                     </Grid>
                 </CardContent>
             </Card>
