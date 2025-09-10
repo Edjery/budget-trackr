@@ -40,21 +40,24 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
                 </Box>
 
                 <Box sx={{ flex: 1, overflow: "auto", mb: 2 }}>
-                    {transactions.slice(0, 3).map((transaction, index) => (
-                        <Box key={index} sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-                            <Typography variant="body2" noWrap sx={{ maxWidth: "70%" }}>
-                                {transaction.name}
-                            </Typography>
-                            <Typography
-                                variant="body2"
-                                color={transaction.type === "earnings" ? "success.main" : "error.main"}
-                                sx={{ fontWeight: "medium" }}
-                            >
-                                {transaction.type === "earnings" ? "+" : "-"}$
-                                {parseFloat(transaction.amount).toFixed(2)}
-                            </Typography>
-                        </Box>
-                    ))}
+                    {[...transactions]
+                        .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+                        .slice(0, 3)
+                        .map((transaction, index) => (
+                            <Box key={index} sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+                                <Typography variant="body2" noWrap sx={{ maxWidth: "70%" }}>
+                                    {transaction.name}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color={transaction.type === "earnings" ? "success.main" : "error.main"}
+                                    sx={{ fontWeight: "medium" }}
+                                >
+                                    {transaction.type === "earnings" ? "+" : "-"}$
+                                    {parseFloat(transaction.amount).toFixed(2)}
+                                </Typography>
+                            </Box>
+                        ))}
                     {transactions.length > 3 && (
                         <Typography variant="caption" color="text.secondary">
                             +{transactions.length - 3} more...

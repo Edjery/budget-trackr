@@ -22,6 +22,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useCallback, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTransactionOrder } from "../hooks/useTransactionOrder";
 import type { Transaction } from "../types";
 import { SortableTransactionRow } from "./SortableTransactionRow";
@@ -112,15 +113,20 @@ export const TransactionDetailsDialog = ({
         })
     );
 
+    // Get the query client
+    const queryClient = useQueryClient();
+
     // Handle drag end event
     const handleDragEnd = useCallback(
-        (event: any) => {
+        async (event: any) => {
             const { active, over } = event;
             if (active.id !== over.id) {
-                updateOrder(active.id, over.id);
+                await updateOrder(active.id, over.id);
+                // Refresh the transactions after reordering
+                queryClient.invalidateQueries({ queryKey: ["transactions"] });
             }
         },
-        [updateOrder]
+        [updateOrder, queryClient]
     );
 
     return (
