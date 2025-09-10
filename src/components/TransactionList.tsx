@@ -71,7 +71,6 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                     justifyContent: "center",
                                     alignItems: "center",
                                     cursor: "pointer",
-                                    minHeight: "200px",
                                     bgcolor: "action.hover",
                                     "&:hover": {
                                         bgcolor: "action.selected",
@@ -96,17 +95,12 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={date}>
                                                 <Card
                                                     variant="outlined"
-                                                    onClick={() => {
-                                                        if (dateTransactions.length > 0) {
-                                                            handleCardClick(dateTransactions[0]);
-                                                        }
-                                                    }}
                                                     sx={{
                                                         height: "100%",
+                                                        maxHeight: "15rem",
                                                         display: "flex",
                                                         flexDirection: "column",
                                                         bgcolor: "background.paper",
-                                                        cursor: "pointer",
                                                         transition: "all 0.2s ease-in-out",
                                                         "&:hover": {
                                                             boxShadow: 3,
@@ -114,12 +108,25 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                                         },
                                                     }}
                                                 >
-                                                    <CardContent sx={{ flexGrow: 1, p: 2 }}>
+                                                    {/* Header with Date */}
+                                                    <Box
+                                                        onClick={() => {
+                                                            if (dateTransactions.length > 0) {
+                                                                handleCardClick(dateTransactions[0]);
+                                                            }
+                                                        }}
+                                                        sx={{
+                                                            p: 2,
+                                                            pb: 1,
+                                                            borderBottom: "1px solid",
+                                                            borderColor: "divider",
+                                                            cursor: "pointer",
+                                                        }}
+                                                    >
                                                         <Typography
                                                             variant="subtitle1"
                                                             fontWeight="medium"
                                                             color="primary"
-                                                            sx={{ mb: 1 }}
                                                         >
                                                             {new Date(date).toLocaleDateString("en-PH", {
                                                                 year: "numeric",
@@ -127,7 +134,28 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                                                 day: "numeric",
                                                             })}
                                                         </Typography>
-
+                                                    </Box>
+                                                    {/* Scrollable Content */}
+                                                    <Box
+                                                        sx={{
+                                                            flex: "1 1 auto",
+                                                            overflowY: "auto",
+                                                            p: 2,
+                                                            "&::-webkit-scrollbar": {
+                                                                width: "6px",
+                                                            },
+                                                            "&::-webkit-scrollbar-track": {
+                                                                background: "transparent",
+                                                            },
+                                                            "&::-webkit-scrollbar-thumb": {
+                                                                background: "#888",
+                                                                borderRadius: "4px",
+                                                                "&:hover": {
+                                                                    background: "#555",
+                                                                },
+                                                            },
+                                                        }}
+                                                    >
                                                         <Box
                                                             sx={{
                                                                 display: "flex",
@@ -166,29 +194,38 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                                                 </Box>
                                                             ))}
                                                         </Box>
-
-                                                        <Box
-                                                            sx={{
-                                                                display: "flex",
-                                                                justifyContent: "space-between",
-                                                                mt: 1,
-                                                                pt: 1,
-                                                                borderTop: "1px solid",
-                                                                borderColor: "divider",
-                                                            }}
+                                                    </Box>
+                                                    {/* Fixed Footer with Total */}
+                                                    <Box
+                                                        sx={{
+                                                            p: 2,
+                                                            bgcolor: "background.paper",
+                                                            borderTop: "1px solid",
+                                                            borderColor: "divider",
+                                                            display: "flex",
+                                                            justifyContent: "space-between",
+                                                            alignItems: "center",
+                                                            zIndex: 1,
+                                                            boxShadow: "0 -2px 8px rgba(0,0,0,0.05)",
+                                                            cursor: "pointer",
+                                                        }}
+                                                        onClick={() => {
+                                                            if (dateTransactions.length > 0) {
+                                                                handleCardClick(dateTransactions[0]);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Typography variant="subtitle2" fontWeight="bold">
+                                                            Total:
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="subtitle1"
+                                                            fontWeight="bold"
+                                                            color={total >= 0 ? "success.main" : "error.main"}
                                                         >
-                                                            <Typography variant="body2" fontWeight="bold">
-                                                                Total:
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body2"
-                                                                fontWeight="bold"
-                                                                color={total >= 0 ? "success.main" : "error.main"}
-                                                            >
-                                                                {total >= 0 ? "+" : ""}${Math.abs(total).toFixed(2)}
-                                                            </Typography>
-                                                        </Box>
-                                                    </CardContent>
+                                                            {total >= 0 ? "+" : ""}${Math.abs(total).toFixed(2)}
+                                                        </Typography>
+                                                    </Box>
                                                 </Card>
                                             </Grid>
                                         );
