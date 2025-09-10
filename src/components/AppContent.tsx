@@ -78,9 +78,10 @@ const AppContent = () => {
                               items: [
                                   {
                                       id: crypto.randomUUID(),
-                                      type: "spendings",
+                                      type: "spendings" as const,
                                       name: "",
                                       amount: "",
+                                      sortOrder: 0, // Default sort order for new items
                                   },
                               ],
                           }
