@@ -8,17 +8,17 @@ import TransactionForm from "./TransactionForm";
 interface TransactionFormDialogProps {
     openDialog: boolean;
     handleCloseDialog: () => void;
-    initialValues?: FormValues;
-    onSubmit?: (values: FormValues) => Promise<void>;
-    isEditing?: boolean;
+    initialValues: FormValues | null;
+    onSubmit: (values: FormValues) => void | Promise<void>;
+    isEditing: boolean;
 }
 
-const TransactionFormDialog = ({ 
-    openDialog, 
-    handleCloseDialog, 
-    initialValues: propInitialValues, 
+const TransactionFormDialog = ({
+    openDialog,
+    handleCloseDialog,
+    initialValues: propInitialValues,
     onSubmit: propOnSubmit,
-    isEditing = false 
+    isEditing = false,
 }: TransactionFormDialogProps) => {
     const { getInitialValues, createEmptyTransactionItem, resetFormValues } = useTransactionForm();
     const { submitTransaction, isSubmitting } = useTransactionSubmission();
@@ -42,7 +42,7 @@ const TransactionFormDialog = ({
 
     return (
         <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-            <DialogTitle>{isEditing ? 'Edit Transaction' : 'Add New Transaction'}</DialogTitle>
+            <DialogTitle>{isEditing ? "Edit Transaction" : "Add New Transaction"}</DialogTitle>
             <DialogContent>
                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     {({ isSubmitting: formikIsSubmitting }) => (

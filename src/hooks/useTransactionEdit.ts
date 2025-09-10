@@ -1,9 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import type { Transaction, FormValues } from '../types';
 import { useTransactionForm } from './useTransactionForm';
-import { toLocalDateString } from '../utils/dateUtils';
+import type { UseMutateFunction } from '@tanstack/react-query';
 
-export const useTransactionEdit = (updateTransaction: (id: string, values: FormValues) => Promise<void>) => {
+type UpdateTransactionFn = UseMutateFunction<
+  Transaction,
+  Error,
+  { id: string; values: FormValues },
+  unknown
+>;
+
+export const useTransactionEdit = (updateTransaction: UpdateTransactionFn) => {
     const { transactionToFormValues } = useTransactionForm();
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
@@ -22,40 +29,22 @@ export const useTransactionEdit = (updateTransaction: (id: string, values: FormV
         setInitialFormValues(null);
     };
 
-    const handleSaveTransaction = useCallback(async (values: FormValues) => {
+    const handleSaveTransaction = (values: FormValues) => {
         if (!editingTransaction) return;
         
-        try {
-            // Convert form values back to transaction format
-            const updatedTransaction: Transaction = {
-                ...editingTransaction,
-                name: values.items[0]?.name || '',
-                amount: values.items[0]?.amount || '0',
-                type: values.items[0]?.type || 'spendings',
-                date: toLocalDateString(values.year, values.month, values.startDay),
-                month: values.month,
-                year: values.year,
-            };
-
-            // Update the transaction
-            await updateTransaction(editingTransaction.id, values);
-            
-            // Update local storage
-            const storedTransactions = localStorage.getItem('transactions');
-            if (storedTransactions) {
-                const transactions: Transaction[] = JSON.parse(storedTransactions);
-                const updatedTransactions = transactions.map(tx => 
-                    tx.id === editingTransaction.id ? updatedTransaction : tx
-                );
-                localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        updateTransaction(
+            { id: editingTransaction.id, values },
+            {
+                onSuccess: () => {
+                    handleCloseEditDialog();
+                },
+                onError: (error) => {
+                    console.error('Failed to update transaction:', error);
+                    // You might want to add error handling here, like showing a toast notification
+                },
             }
-            
-            handleCloseEditDialog();
-        } catch (error) {
-            console.error('Failed to update transaction:', error);
-            // You might want to add error handling here, like showing a toast notification
-        }
-    }, [editingTransaction, updateTransaction]);
+        );
+    };
 
     return {
         isEditDialogOpen,

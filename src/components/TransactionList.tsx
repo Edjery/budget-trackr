@@ -4,15 +4,15 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Card, CardContent, Collapse, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 import type { Transaction } from "../types";
-import TransactionFormDialog from "./TransactionFormDialog";
 import TransactionDetailsDialog from "./TransactionDetailsDialog";
 
 interface TransactionListProps {
     transactions: Transaction[];
     onEditTransaction?: (transaction: Transaction) => void;
+    onAddTransaction?: () => void;
 }
 
-export const TransactionList = ({ transactions, onEditTransaction }: TransactionListProps) => {
+export const TransactionList = ({ transactions, onEditTransaction, onAddTransaction }: TransactionListProps) => {
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -20,8 +20,6 @@ export const TransactionList = ({ transactions, onEditTransaction }: Transaction
         setSelectedTransaction(transaction);
         setIsDialogOpen(true);
     };
-
-    const [openDialog, setOpenDialog] = useState(false);
 
     const handleCloseDetailsDialog = () => {
         setIsDialogOpen(false);
@@ -35,13 +33,7 @@ export const TransactionList = ({ transactions, onEditTransaction }: Transaction
         }
     };
 
-    const handleOpenAddDialog = () => {
-        setOpenDialog(true);
-    };
-
-    const handleCloseAddDialog = () => {
-        setOpenDialog(false);
-    };
+    const handleOpenAddDialog = onAddTransaction || (() => {});
 
     const groupedTransactions = transactions.reduce((acc: Record<string, Transaction[]>, transaction) => {
         const dateStr = transaction.date;
@@ -213,10 +205,9 @@ export const TransactionList = ({ transactions, onEditTransaction }: Transaction
                 onClose={handleCloseDetailsDialog}
                 transaction={selectedTransaction}
                 onEdit={handleEdit}
+                onAddTransaction={onAddTransaction}
                 transactions={transactions}
             />
-            {/* Add Transaction Dialog */}
-            <TransactionFormDialog openDialog={openDialog} handleCloseDialog={handleCloseAddDialog} />
         </>
     );
 };

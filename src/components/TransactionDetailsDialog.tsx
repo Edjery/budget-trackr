@@ -1,5 +1,6 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import type { Transaction } from '../types';
 
 interface TransactionDetailsDialogProps {
@@ -7,6 +8,7 @@ interface TransactionDetailsDialogProps {
   onClose: () => void;
   transaction: Transaction | null;
   onEdit: (transaction: Transaction) => void;
+  onAddTransaction?: () => void;
   transactions: Transaction[];
 }
 
@@ -15,6 +17,7 @@ export const TransactionDetailsDialog = ({
   onClose,
   transaction: selectedTransaction,
   onEdit,
+  onAddTransaction,
   transactions,
 }: TransactionDetailsDialogProps) => {
   if (!selectedTransaction) return null;
@@ -100,10 +103,32 @@ export const TransactionDetailsDialog = ({
           </Typography>
         </Box>
       </DialogContent>
-      <DialogActions sx={{ p: 2 }}>
-        <Button onClick={onClose} color="inherit">
-          Close
-        </Button>
+      <DialogActions sx={{ p: 2, justifyContent: 'space-between' }}>
+        {onAddTransaction && (
+          <Button 
+            onClick={onAddTransaction} 
+            color="primary"
+            variant="outlined"
+            startIcon={<AddIcon />}
+          >
+            Add Transaction
+          </Button>
+        )}
+        <Box>
+          <Button onClick={onClose} sx={{ mr: 1 }}>
+            Close
+          </Button>
+          {selectedTransaction && (
+            <Button
+              onClick={() => onEdit(selectedTransaction)}
+              color="primary"
+              startIcon={<EditIcon />}
+              variant="contained"
+            >
+              Edit
+            </Button>
+          )}
+        </Box>
       </DialogActions>
     </Dialog>
   );
