@@ -10,7 +10,14 @@ type UpdateTransactionFn = UseMutateFunction<
   unknown
 >;
 
-export const useTransactionEdit = (updateTransaction: UpdateTransactionFn) => {
+type DeleteTransactionFn = UseMutateFunction<
+  boolean,
+  Error,
+  string,
+  unknown
+>;
+
+export const useTransactionEdit = (updateTransaction: UpdateTransactionFn, deleteTransaction: DeleteTransactionFn) => {
     const { transactionToFormValues } = useTransactionForm();
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
@@ -46,6 +53,11 @@ export const useTransactionEdit = (updateTransaction: UpdateTransactionFn) => {
         );
     };
 
+    const handleDeleteTransaction = (transaction: Transaction) => {
+        deleteTransaction(transaction.id);
+        handleCloseEditDialog();
+    };
+
     return {
         isEditDialogOpen,
         editingTransaction,
@@ -53,5 +65,6 @@ export const useTransactionEdit = (updateTransaction: UpdateTransactionFn) => {
         handleEditTransaction,
         handleCloseEditDialog,
         handleSaveTransaction,
+        handleDeleteTransaction,
     };
 };

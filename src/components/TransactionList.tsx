@@ -10,10 +10,16 @@ import TransactionDetailsDialog from "./TransactionDetailsDialog";
 interface TransactionListProps {
     transactions: Transaction[];
     onEditTransaction?: (transaction: Transaction) => void;
+    onDeleteTransaction?: (transaction: Transaction) => void;
     onAddTransaction?: () => void;
 }
 
-export const TransactionList = ({ transactions, onEditTransaction, onAddTransaction }: TransactionListProps) => {
+export const TransactionList = ({
+    transactions,
+    onEditTransaction,
+    onDeleteTransaction,
+    onAddTransaction,
+}: TransactionListProps) => {
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -27,11 +33,6 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
         setTimeout(() => setSelectedDate(null), 300);
     };
 
-    const handleEdit = (transaction: Transaction) => {
-        onEditTransaction?.(transaction);
-        handleCloseDetailsDialog();
-    };
-
     const handleOpenAddDialog = onAddTransaction || (() => {});
 
     const groupedTransactions = transactions.reduce((acc: Record<string, Transaction[]>, transaction) => {
@@ -42,13 +43,6 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
         acc[dateStr].push(transaction);
         return acc;
     }, {});
-
-    const calculateTotal = (transactions: Transaction[]): number => {
-        return transactions.reduce((sum: number, t: Transaction) => {
-            const amount = parseFloat(t.amount);
-            return t.type === "earnings" ? sum + amount : sum - amount;
-        }, 0);
-    };
 
     return (
         <>
@@ -111,6 +105,7 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                     onClose={handleCloseDetailsDialog}
                     transaction={{ date: selectedDate } as Transaction}
                     onEdit={onEditTransaction}
+                    onDelete={onDeleteTransaction}
                     onAddTransaction={onAddTransaction}
                     transactions={transactions}
                 />

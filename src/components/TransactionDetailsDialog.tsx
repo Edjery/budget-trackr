@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
     Dialog,
     DialogTitle,
@@ -17,6 +18,8 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import type { Transaction } from "../types";
 
 interface TransactionDetailsDialogProps {
@@ -24,6 +27,7 @@ interface TransactionDetailsDialogProps {
     onClose: () => void;
     transaction: Transaction | null;
     onEdit?: (transaction: Transaction) => void;
+    onDelete?: (transaction: Transaction) => void;
     onAddTransaction?: () => void;
     transactions: Transaction[];
 }
@@ -33,9 +37,28 @@ export const TransactionDetailsDialog = ({
     onClose,
     transaction: selectedTransaction,
     onEdit,
+    onDelete,
     onAddTransaction,
     transactions,
 }: TransactionDetailsDialogProps) => {
+    const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
+
+    const handleDeleteClick = (transaction: Transaction, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setTransactionToDelete(transaction);
+    };
+
+    const handleCancelDelete = () => {
+        setTransactionToDelete(null);
+    };
+
+    const handleConfirmDelete = () => {
+        if (transactionToDelete) {
+            onDelete?.(transactionToDelete);
+            setTransactionToDelete(null);
+        }
+    };
+
     if (!selectedTransaction) return null;
 
     // Group transactions by date
@@ -107,6 +130,13 @@ export const TransactionDetailsDialog = ({
                                             >
                                                 <EditIcon fontSize="small" />
                                             </IconButton>
+                                            <IconButton
+                                                size="small"
+                                                onClick={(e) => handleDeleteClick(transaction, e)}
+                                                color="error"
+                                            >
+                                                <DeleteIcon fontSize="small" />
+                                            </IconButton>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -137,18 +167,31 @@ export const TransactionDetailsDialog = ({
                     <Button onClick={onClose} sx={{ mr: 1 }}>
                         Close
                     </Button>
-                    {selectedDateTransactions.length > 0 && (
-                        <Button
-                            onClick={() => onEdit?.(selectedDateTransactions[0])}
-                            color="primary"
-                            startIcon={<EditIcon />}
-                            variant="contained"
-                        >
-                            Edit
-                        </Button>
-                    )}
                 </Box>
             </DialogActions>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={!!transactionToDelete} onClose={handleCancelDelete} maxWidth="xs" fullWidth>
+                <DialogTitle>
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <WarningAmberIcon color="warning" />
+                        <span>Delete Transaction</span>
+                    </Box>
+                </DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Are you sure you want to delete this transaction? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 2, justifyContent: "flex-end" }}>
+                    <Button onClick={handleCancelDelete} color="inherit">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="error" variant="contained" startIcon={<DeleteIcon />}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Dialog>
     );
 };

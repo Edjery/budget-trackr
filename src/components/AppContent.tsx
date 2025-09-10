@@ -10,12 +10,18 @@ import type { FormValues } from "../types";
 const AppContent = () => {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-    const { transactions, updateTransaction, addTransaction } = useTransactions();
+    const { transactions, updateTransaction, addTransaction, deleteTransaction } = useTransactions();
 
     const { totalEarnings, totalSpendings, balance } = useTransactionCalculations(transactions);
 
-    const { isEditDialogOpen, initialFormValues, handleEditTransaction, handleCloseEditDialog, handleSaveTransaction } =
-        useTransactionEdit(updateTransaction.mutateAsync);
+    const {
+        isEditDialogOpen,
+        initialFormValues,
+        handleEditTransaction,
+        handleCloseEditDialog,
+        handleSaveTransaction,
+        handleDeleteTransaction,
+    } = useTransactionEdit(updateTransaction.mutateAsync, deleteTransaction.mutateAsync);
 
     const handleAddTransaction = (values: FormValues) => {
         addTransaction.mutate(values);
@@ -36,6 +42,7 @@ const AppContent = () => {
             <TransactionList
                 transactions={transactions}
                 onEditTransaction={handleEditTransaction}
+                onDeleteTransaction={handleDeleteTransaction}
                 onAddTransaction={handleOpenAddDialog}
             />
 
