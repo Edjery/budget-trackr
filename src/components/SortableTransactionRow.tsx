@@ -5,6 +5,7 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import EditIcon from "@mui/icons-material/Edit";
 import { IconButton, TableCell, TableRow } from "@mui/material";
 import type { Transaction } from "../types";
+import { formatCurrency } from "../utils/currencyUtils";
 
 interface SortableTransactionRowProps {
     transaction: Transaction;
@@ -73,7 +74,7 @@ export const SortableTransactionRow = ({ transaction, onEdit, onDelete }: Sortab
                     color: transaction.type === "earnings" ? "success.main" : "error.main",
                 }}
             >
-                {transaction.type === "earnings" ? "+" : "-"}${parseFloat(transaction.amount).toFixed(2)}
+                {transaction.type === "earnings" ? "+" : "-"}{formatCurrency(parseFloat(transaction.amount))}
             </TableCell>
             <TableCell sx={{ textTransform: "capitalize" }}>{transaction.type}</TableCell>
             <TableCell align="right">

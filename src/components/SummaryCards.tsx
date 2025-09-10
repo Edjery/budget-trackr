@@ -1,6 +1,7 @@
 import { AccountBalance, AttachMoney, MoneyOff } from "@mui/icons-material";
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import type { SummaryCardsProps } from "../types";
+import { formatCurrency } from "../utils/currencyUtils";
 
 export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: SummaryCardsProps) => (
     <Grid container spacing={3} sx={{ my: 4 }}>
@@ -15,7 +16,7 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
                         </Typography>
                     </Box>
                     <Typography variant="h4" color={balance >= 0 ? "success.main" : "error.main"}>
-                        ${Math.abs(balance).toFixed(2)}
+                        {formatCurrency(Math.abs(balance))}
                     </Typography>
                 </CardContent>
             </Card>
@@ -32,7 +33,7 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
                         </Typography>
                     </Box>
                     <Typography variant="h4" color="primary">
-                        ${totalEarnings.toFixed(2)}
+                        {formatCurrency(totalEarnings)}
                     </Typography>
                 </CardContent>
             </Card>
@@ -49,7 +50,7 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
                         </Typography>
                     </Box>
                     <Typography variant="h4" color="error.main">
-                        ${totalSpendings.toFixed(2)}
+                        {formatCurrency(totalSpendings)}
                     </Typography>
                 </CardContent>
             </Card>
