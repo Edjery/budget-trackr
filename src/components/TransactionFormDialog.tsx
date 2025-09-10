@@ -1,9 +1,10 @@
-import { Box, Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Box, Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import { Form, Formik } from "formik";
 import { useTransactionForm } from "../hooks/useTransactionForm";
 import useTransactionSubmission from "../hooks/useTransactionSubmission";
 import { type FormValues, validationSchema } from "../types";
 import TransactionForm from "./TransactionForm";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface TransactionFormDialogProps {
     openDialog: boolean;
@@ -42,7 +43,21 @@ const TransactionFormDialog = ({
 
     return (
         <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-            <DialogTitle>{isEditing ? "Edit Transaction" : "Add New Transaction"}</DialogTitle>
+            <DialogTitle sx={{ m: 0, p: 2 }}>
+                {isEditing ? "Edit Transaction" : "Add New Transaction"}
+                <IconButton
+                    aria-label="close"
+                    onClick={handleCloseDialog}
+                    sx={{
+                        position: "absolute",
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
             <DialogContent>
                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     {({ isSubmitting: formikIsSubmitting }) => (

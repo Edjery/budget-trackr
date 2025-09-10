@@ -240,16 +240,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
             <Box sx={{ mt: 4 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                     <Typography variant="h6">Transaction Items</Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<AddIcon />}
-                        onClick={handleAddItem}
-                        size="small"
-                        disabled={isSubmitting}
-                    >
-                        Add Item
-                    </Button>
                 </Box>
 
                 <FieldArray name="items">
@@ -384,24 +374,30 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                                         </Grid>
                                     </Box>
                                 ))}
+
+                                <Grid
+                                    size={{ xs: 12, sm: 1 }}
+                                    sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                                >
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<AddIcon />}
+                                        onClick={handleAddItem}
+                                        disabled={isSubmitting}
+                                    >
+                                        Add Item
+                                    </Button>
+                                </Grid>
                             </Box>
 
                             <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                                <Button
-                                    variant="outlined"
-                                    startIcon={<AddIcon />}
-                                    onClick={handleAddItem}
-                                    disabled={isSubmitting}
-                                >
-                                    Add Item
-                                </Button>
-
                                 <Button
                                     type="submit"
                                     variant="contained"
                                     color="primary"
                                     size="large"
                                     disabled={values.items.length === 0 || isSubmitting}
+                                    fullWidth
                                 >
                                     Save Transaction{values.dayRangeType === "single" ? "" : "s"}
                                 </Button>

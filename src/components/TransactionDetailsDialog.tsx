@@ -28,7 +28,7 @@ interface TransactionDetailsDialogProps {
     transaction: Transaction | null;
     onEdit?: (transaction: Transaction) => void;
     onDelete?: (transaction: Transaction) => void;
-    onAddTransaction?: () => void;
+    onAddTransaction?: (date: string) => void;
     transactions: Transaction[];
 }
 
@@ -180,7 +180,10 @@ export const TransactionDetailsDialog = ({
                     <Box display="flex" gap={1}>
                         {onAddTransaction && (
                             <Button
-                                onClick={onAddTransaction}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAddTransaction(selectedTransaction.date);
+                                }}
                                 color="primary"
                                 variant="contained"
                                 startIcon={<AddIcon />}

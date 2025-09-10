@@ -11,7 +11,7 @@ interface TransactionListProps {
     transactions: Transaction[];
     onEditTransaction?: (transaction: Transaction) => void;
     onDeleteTransaction?: (transaction: Transaction) => void;
-    onAddTransaction?: () => void;
+    onAddTransaction?: (date?: string) => void;
 }
 
 export const TransactionList = ({
@@ -32,8 +32,6 @@ export const TransactionList = ({
         setIsDialogOpen(false);
         setTimeout(() => setSelectedDate(null), 300);
     };
-
-    const handleOpenAddDialog = onAddTransaction || (() => {});
 
     const groupedTransactions = transactions.reduce((acc: Record<string, Transaction[]>, transaction) => {
         const dateStr = transaction.date;
@@ -56,7 +54,7 @@ export const TransactionList = ({
                         {/* Add Item Button */}
                         <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                             <Card
-                                onClick={handleOpenAddDialog}
+                                onClick={() => onAddTransaction?.()}
                                 sx={{
                                     height: "100%",
                                     minHeight: "14rem",
