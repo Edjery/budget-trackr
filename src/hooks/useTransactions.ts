@@ -23,9 +23,16 @@ export const useTransactions = () => {
     mutationFn: async (values) => {
       const newTransactions: TransactionInput[] = [];
       const baseId = Date.now();
+      const existingTransactions = queryClient.getQueryData<Transaction[]>(TRANSACTIONS_QUERY_KEY) || [];
       
       const addTransactionItem = (dateStr: string, item: typeof values.items[0]) => {
         if (item.name && item.amount) {
+          // Count existing items with the same date to determine sortOrder
+          const itemsForDate = existingTransactions.filter(tx => tx.date === dateStr);
+          const sortOrder = itemsForDate.length > 0 
+            ? Math.max(...itemsForDate.map(tx => tx.sortOrder || 0)) + 1 
+            : 0;
+            
           newTransactions.push({
             name: item.name,
             amount: item.amount,
@@ -33,6 +40,7 @@ export const useTransactions = () => {
             date: dateStr,
             month: values.month,
             year: values.year,
+            sortOrder,
           });
         }
       };
@@ -76,6 +84,7 @@ export const useTransactions = () => {
         date: toLocalDateString(values.year, values.month, values.startDay),
         month: values.month,
         year: values.year,
+        sortOrder: values.items[0]?.sortOrder || 0,
       };
 
       const updatedTransactions = currentData.map(tx => 

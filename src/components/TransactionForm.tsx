@@ -102,6 +102,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
         }
     }, [values.month, values.year, daysInMonth, setFieldValue, values.endDay]);
 
+    // Sort items by sortOrder
+    const sortedItems = [...values.items].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
     // Handle adding a new transaction item
     const handleAddItem = () => {
         const newItem: TransactionItem = {
@@ -109,6 +112,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
             type: "spendings",
             name: "",
             amount: "",
+            sortOrder:
+                values.items.length > 0 ? Math.max(...values.items.map((item) => item.sortOrder || 0), 0) + 1 : 0,
         };
         setFieldValue("items", [...values.items, newItem]);
     };
@@ -238,173 +243,164 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
 
             {/* Transaction Items Section */}
             <Box sx={{ mt: 4 }}>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-                    <Typography variant="h6">Transaction Items</Typography>
-                </Box>
-
                 <FieldArray name="items">
-                    {() => (
-                        <Box sx={{ mt: 3 }}>
-                            <Box sx={{ mb: 3 }}>
-                                {values.items.map((item, index) => (
-                                    <Box
-                                        key={item.id}
-                                        sx={{
-                                            mb: 2,
-                                            p: 2,
-                                            border: "1px solid",
-                                            borderColor: "divider",
-                                            borderRadius: 1,
-                                        }}
-                                    >
-                                        <Grid container spacing={2} alignItems="center">
-                                            <Grid size={{ xs: 12, sm: 5 }}>
-                                                <FormControl
-                                                    fullWidth
-                                                    error={Boolean(
-                                                        touched.items?.[index]?.name &&
-                                                            typeof errors.items?.[index] === "object" &&
-                                                            errors.items?.[index] &&
-                                                            "name" in errors.items[index]!
-                                                    )}
-                                                >
-                                                    <TextField
-                                                        name={`items.${index}.name`}
-                                                        label="Item Name"
-                                                        fullWidth
-                                                        size="small"
-                                                        value={item.name}
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        disabled={isSubmitting}
-                                                    />
-                                                    {touched.items?.[index]?.name &&
+                    {({}) => (
+                        <Box>
+                            {sortedItems.map((item, index) => (
+                                <Box
+                                    key={item.id}
+                                    sx={{
+                                        mb: 2,
+                                        p: 2,
+                                        border: "1px solid",
+                                        borderColor: "divider",
+                                        borderRadius: 1,
+                                    }}
+                                >
+                                    <Grid container spacing={2} alignItems="center">
+                                        <Grid size={{ xs: 12, sm: 5 }}>
+                                            <FormControl
+                                                fullWidth
+                                                error={Boolean(
+                                                    touched.items?.[index]?.name &&
                                                         typeof errors.items?.[index] === "object" &&
                                                         errors.items?.[index] &&
-                                                        "name" in errors.items[index]! && (
-                                                            <FormHelperText>
-                                                                {String((errors.items?.[index] as any)?.name)}
-                                                            </FormHelperText>
-                                                        )}
-                                                </FormControl>
-                                            </Grid>
-
-                                            <Grid size={{ xs: 12, sm: 3 }}>
-                                                <FormControl
-                                                    fullWidth
-                                                    error={Boolean(
-                                                        touched.items?.[index]?.type &&
-                                                            typeof errors.items?.[index] === "object" &&
-                                                            errors.items?.[index] &&
-                                                            "type" in errors.items[index]!
-                                                    )}
-                                                >
-                                                    <InputLabel>Type</InputLabel>
-                                                    <Select
-                                                        name={`items.${index}.type`}
-                                                        value={item.type}
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        label="Type"
-                                                        size="small"
-                                                        disabled={isSubmitting}
-                                                    >
-                                                        <MenuItem value="earnings">Earnings</MenuItem>
-                                                        <MenuItem value="spendings">Spendings</MenuItem>
-                                                    </Select>
-                                                    {touched.items?.[index]?.type &&
-                                                        typeof errors.items?.[index] === "object" &&
-                                                        errors.items?.[index] &&
-                                                        "type" in errors.items[index]! && (
-                                                            <FormHelperText>
-                                                                {String((errors.items?.[index] as any)?.type)}
-                                                            </FormHelperText>
-                                                        )}
-                                                </FormControl>
-                                            </Grid>
-
-                                            <Grid size={{ xs: 12, sm: 3 }}>
-                                                <FormControl
-                                                    fullWidth
-                                                    error={Boolean(
-                                                        touched.items?.[index]?.amount &&
-                                                            typeof errors.items?.[index] === "object" &&
-                                                            errors.items?.[index] &&
-                                                            "amount" in errors.items[index]!
-                                                    )}
-                                                >
-                                                    <TextField
-                                                        name={`items.${index}.amount`}
-                                                        label="Amount"
-                                                        type="number"
-                                                        value={item.amount}
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        inputProps={{ step: "0.01", min: "0.01" }}
-                                                        fullWidth
-                                                        size="small"
-                                                        disabled={isSubmitting}
-                                                    />
-                                                    {touched.items?.[index]?.amount &&
-                                                        typeof errors.items?.[index] === "object" &&
-                                                        errors.items?.[index] &&
-                                                        "amount" in errors.items[index]! && (
-                                                            <FormHelperText>
-                                                                {String((errors.items?.[index] as any)?.amount)}
-                                                            </FormHelperText>
-                                                        )}
-                                                </FormControl>
-                                            </Grid>
-
-                                            <Grid
-                                                size={{ xs: 12, sm: 1 }}
-                                                sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                                                        "name" in errors.items[index]!
+                                                )}
                                             >
-                                                <Button
-                                                    variant="outlined"
-                                                    color="error"
+                                                <TextField
+                                                    name={`items.${index}.name`}
+                                                    label="Item Name"
+                                                    fullWidth
                                                     size="small"
-                                                    onClick={() => handleRemoveItem(index)}
-                                                    disabled={values.items.length <= 1 || isSubmitting}
-                                                    sx={{ minWidth: "auto" }}
-                                                >
-                                                    <RemoveIcon />
-                                                </Button>
-                                            </Grid>
+                                                    value={item.name}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    disabled={isSubmitting}
+                                                />
+                                                {touched.items?.[index]?.name &&
+                                                    typeof errors.items?.[index] === "object" &&
+                                                    errors.items?.[index] &&
+                                                    "name" in errors.items[index]! && (
+                                                        <FormHelperText>
+                                                            {String((errors.items?.[index] as any)?.name)}
+                                                        </FormHelperText>
+                                                    )}
+                                            </FormControl>
                                         </Grid>
-                                    </Box>
-                                ))}
 
-                                <Grid
-                                    size={{ xs: 12, sm: 1 }}
-                                    sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-                                >
-                                    <Button
-                                        variant="contained"
-                                        startIcon={<AddIcon />}
-                                        onClick={handleAddItem}
-                                        disabled={isSubmitting}
-                                    >
-                                        Add Item
-                                    </Button>
-                                </Grid>
-                            </Box>
+                                        <Grid size={{ xs: 12, sm: 3 }}>
+                                            <FormControl
+                                                fullWidth
+                                                error={Boolean(
+                                                    touched.items?.[index]?.type &&
+                                                        typeof errors.items?.[index] === "object" &&
+                                                        errors.items?.[index] &&
+                                                        "type" in errors.items[index]!
+                                                )}
+                                            >
+                                                <InputLabel>Type</InputLabel>
+                                                <Select
+                                                    name={`items.${index}.type`}
+                                                    value={item.type}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    label="Type"
+                                                    size="small"
+                                                    disabled={isSubmitting}
+                                                >
+                                                    <MenuItem value="earnings">Earnings</MenuItem>
+                                                    <MenuItem value="spendings">Spendings</MenuItem>
+                                                </Select>
+                                                {touched.items?.[index]?.type &&
+                                                    typeof errors.items?.[index] === "object" &&
+                                                    errors.items?.[index] &&
+                                                    "type" in errors.items[index]! && (
+                                                        <FormHelperText>
+                                                            {String((errors.items?.[index] as any)?.type)}
+                                                        </FormHelperText>
+                                                    )}
+                                            </FormControl>
+                                        </Grid>
 
-                            <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+                                        <Grid size={{ xs: 12, sm: 3 }}>
+                                            <FormControl
+                                                fullWidth
+                                                error={Boolean(
+                                                    touched.items?.[index]?.amount &&
+                                                        typeof errors.items?.[index] === "object" &&
+                                                        errors.items?.[index] &&
+                                                        "amount" in errors.items[index]!
+                                                )}
+                                            >
+                                                <TextField
+                                                    name={`items.${index}.amount`}
+                                                    label="Amount"
+                                                    type="number"
+                                                    value={item.amount}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    inputProps={{ step: "0.01", min: "0.01" }}
+                                                    fullWidth
+                                                    size="small"
+                                                    disabled={isSubmitting}
+                                                />
+                                                {touched.items?.[index]?.amount &&
+                                                    typeof errors.items?.[index] === "object" &&
+                                                    errors.items?.[index] &&
+                                                    "amount" in errors.items[index]! && (
+                                                        <FormHelperText>
+                                                            {String((errors.items?.[index] as any)?.amount)}
+                                                        </FormHelperText>
+                                                    )}
+                                            </FormControl>
+                                        </Grid>
+
+                                        <Grid
+                                            size={{ xs: 12, sm: 1 }}
+                                            sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                                        >
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                size="small"
+                                                onClick={() => handleRemoveItem(index)}
+                                                disabled={values.items.length <= 1 || isSubmitting}
+                                                sx={{ minWidth: "auto" }}
+                                            >
+                                                <RemoveIcon />
+                                            </Button>
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            ))}
+
+                            <Grid container justifyContent="center" sx={{ mt: 2 }}>
                                 <Button
-                                    type="submit"
                                     variant="contained"
-                                    color="primary"
-                                    size="large"
-                                    disabled={values.items.length === 0 || isSubmitting}
-                                    fullWidth
+                                    startIcon={<AddIcon />}
+                                    onClick={handleAddItem}
+                                    disabled={isSubmitting}
                                 >
-                                    Save Transaction{values.dayRangeType === "single" ? "" : "s"}
+                                    Add Item
                                 </Button>
-                            </Box>
+                            </Grid>
                         </Box>
                     )}
                 </FieldArray>
+
+                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 4 }}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        disabled={values.items.length === 0 || isSubmitting}
+                        fullWidth
+                    >
+                        Save Transaction{values.dayRangeType === "single" ? "" : "s"}
+                    </Button>
+                </Box>
             </Box>
         </Box>
     );

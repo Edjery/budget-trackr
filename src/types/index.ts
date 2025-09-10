@@ -5,6 +5,7 @@ export interface TransactionItem {
   type: 'earnings' | 'spendings';
   name: string;
   amount: string;
+  sortOrder: number;
 }
 
 export interface Transaction extends TransactionItem {

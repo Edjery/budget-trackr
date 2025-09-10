@@ -17,11 +17,12 @@ export const useTransactionForm = () => {
     };
   };
 
-  const createEmptyTransactionItem = (): TransactionItem => ({
+  const createEmptyTransactionItem = (sortOrder: number = 0): TransactionItem => ({
     id: Date.now().toString(),
     type: 'spendings',
     name: '',
-    amount: ''
+    amount: '',
+    sortOrder
   });
 
   const resetFormValues = (currentValues: Partial<FormValues>): FormValues => ({
@@ -42,7 +43,8 @@ export const useTransactionForm = () => {
         id: transaction.id,
         type: transaction.type,
         name: transaction.name,
-        amount: transaction.amount
+        amount: transaction.amount,
+        sortOrder: transaction.sortOrder || 0
       }]
     };
   };
