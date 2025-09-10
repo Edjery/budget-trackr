@@ -4,7 +4,6 @@ import type { Transaction, FormValues } from '../types';
 
 export const useTransactionSubmission = () => {
   const [transactions, setTransactions] = useState<Transaction[]>(() => {
-    // Load transactions from localStorage on initial render
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('transactions');
       return saved ? JSON.parse(saved) : [];
@@ -28,7 +27,6 @@ export const useTransactionSubmission = () => {
       }
     };
 
-    // Process transactions based on day range type
     if (values.dayRangeType === 'single') {
       const dateStr = toLocalDateString(values.year, values.month, values.startDay);
       values.items.forEach(item => addTransaction(dateStr, item));
@@ -42,6 +40,52 @@ export const useTransactionSubmission = () => {
     return newTransactions;
   }, []);
 
+  const updateTransaction = useCallback(async (id: string, updates: Partial<Transaction>) => {
+    try {
+      setIsSubmitting(true);
+      setError(null);
+      
+      setTransactions(prevTransactions => {
+        const updatedTransactions = prevTransactions.map(tx => 
+          tx.id === id ? { ...tx, ...updates } : tx
+        );
+        
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        }
+        return updatedTransactions;
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to update transaction'));
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, []);
+
+  const submitTransaction = useCallback(async (values: FormValues, onSuccess?: () => void) => {
+    try {
+      setIsSubmitting(true);
+      setError(null);
+      const newTransactions = processTransactionItems(values);
+      
+      setTransactions(prevTransactions => {
+        const updatedTransactions = [...prevTransactions, ...newTransactions];
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        }
+        return updatedTransactions;
+      });
+
+      onSuccess?.();
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [processTransactionItems]);
+
   // Save transactions to localStorage whenever they change
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -49,43 +93,13 @@ export const useTransactionSubmission = () => {
     }
   }, [transactions]);
 
-  const submitTransaction = useCallback(async (
-    values: FormValues,
-    onSuccess?: () => void
-  ) => {
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      // Ensure endDay matches startDay when dayRangeType is 'single'
-      const formValues = {
-        ...values,
-        endDay: values.dayRangeType === 'single' ? values.startDay : values.endDay
-      };
-
-      const newTransactions = processTransactionItems(formValues);
-      
-      if (newTransactions.length > 0) {
-        setTransactions(prev => [...prev, ...newTransactions]);
-      }
-
-      onSuccess?.();
-      return { success: true, transactions: newTransactions };
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to submit transaction');
-      setError(error);
-      return { success: false, error };
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [processTransactionItems]);
-
   return {
     transactions,
     isSubmitting,
     error,
     submitTransaction,
-    setTransactions, // In case we need to modify transactions from outside
+    updateTransaction,
+    setTransactions,
   };
 };
 

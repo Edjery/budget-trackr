@@ -1,4 +1,4 @@
-import type { FormValues, TransactionItem } from '../types';
+import type { FormValues, TransactionItem, Transaction } from '../types';
 import { getCurrentDateValues } from '../utils/dateUtils';
 
 export const useTransactionForm = () => {
@@ -30,9 +30,27 @@ export const useTransactionForm = () => {
     month: currentValues.month ?? getCurrentDateValues().month,
   });
 
+  const transactionToFormValues = (transaction: Transaction): FormValues => {
+    const date = new Date(transaction.date);
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      dayRangeType: 'single' as const,
+      startDay: date.getDate(),
+      endDay: date.getDate(),
+      items: [{
+        id: transaction.id,
+        type: transaction.type,
+        name: transaction.name,
+        amount: transaction.amount
+      }]
+    };
+  };
+
   return {
     getInitialValues,
     createEmptyTransactionItem,
-    resetFormValues
+    resetFormValues,
+    transactionToFormValues
   };
 };

@@ -8,28 +8,41 @@ import TransactionForm from "./TransactionForm";
 interface TransactionFormDialogProps {
     openDialog: boolean;
     handleCloseDialog: () => void;
+    initialValues?: FormValues;
+    onSubmit?: (values: FormValues) => Promise<void>;
+    isEditing?: boolean;
 }
 
-const TransactionFormDialog = ({ openDialog, handleCloseDialog }: TransactionFormDialogProps) => {
+const TransactionFormDialog = ({ 
+    openDialog, 
+    handleCloseDialog, 
+    initialValues: propInitialValues, 
+    onSubmit: propOnSubmit,
+    isEditing = false 
+}: TransactionFormDialogProps) => {
     const { getInitialValues, createEmptyTransactionItem, resetFormValues } = useTransactionForm();
     const { submitTransaction, isSubmitting } = useTransactionSubmission();
-    const initialValues = getInitialValues();
+    const initialValues = propInitialValues || getInitialValues();
 
     const handleSubmit = async (
         values: FormValues,
         { resetForm }: { resetForm: (values?: any) => void }
     ): Promise<void> => {
-        await submitTransaction(values, () => {
-            resetForm({
-                ...resetFormValues(values),
-                items: [createEmptyTransactionItem()],
+        if (propOnSubmit) {
+            await propOnSubmit(values);
+        } else {
+            await submitTransaction(values, () => {
+                resetForm({
+                    ...resetFormValues(values),
+                    items: [createEmptyTransactionItem()],
+                });
             });
-        });
+        }
     };
 
     return (
         <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-            <DialogTitle>Add New Transaction</DialogTitle>
+            <DialogTitle>{isEditing ? 'Edit Transaction' : 'Add New Transaction'}</DialogTitle>
             <DialogContent>
                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     {({ isSubmitting: formikIsSubmitting }) => (

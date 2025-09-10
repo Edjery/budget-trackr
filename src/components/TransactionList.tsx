@@ -5,17 +5,44 @@ import { Box, Button, Card, CardContent, Collapse, Grid, Typography } from "@mui
 import { useState } from "react";
 import type { Transaction } from "../types";
 import TransactionFormDialog from "./TransactionFormDialog";
+import TransactionDetailsDialog from "./TransactionDetailsDialog";
 
-export const TransactionList = ({ transactions }: { transactions: Transaction[] }) => {
+interface TransactionListProps {
+    transactions: Transaction[];
+    onEditTransaction?: (transaction: Transaction) => void;
+}
+
+export const TransactionList = ({ transactions, onEditTransaction }: TransactionListProps) => {
+    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const handleCardClick = (transaction: Transaction) => {
+        setSelectedTransaction(transaction);
+        setIsDialogOpen(true);
+    };
+
     const [openDialog, setOpenDialog] = useState(false);
 
-    const handleOpenDialog = () => {
+    const handleCloseDetailsDialog = () => {
+        setIsDialogOpen(false);
+        setTimeout(() => setSelectedTransaction(null), 300); // Wait for dialog animation
+    };
+
+    const handleEdit = () => {
+        if (selectedTransaction && onEditTransaction) {
+            onEditTransaction(selectedTransaction);
+            handleCloseDetailsDialog();
+        }
+    };
+
+    const handleOpenAddDialog = () => {
         setOpenDialog(true);
     };
 
-    const handleCloseDialog = () => {
+    const handleCloseAddDialog = () => {
         setOpenDialog(false);
     };
+
     const groupedTransactions = transactions.reduce((acc: Record<string, Transaction[]>, transaction) => {
         const dateStr = transaction.date;
         if (!acc[dateStr]) {
@@ -44,7 +71,7 @@ export const TransactionList = ({ transactions }: { transactions: Transaction[] 
                         {/* Add Item Button */}
                         <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                             <Card
-                                onClick={handleOpenDialog}
+                                onClick={handleOpenAddDialog}
                                 sx={{
                                     height: "100%",
                                     display: "flex",
@@ -77,13 +104,21 @@ export const TransactionList = ({ transactions }: { transactions: Transaction[] 
                                             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={date}>
                                                 <Card
                                                     variant="outlined"
+                                                    onClick={() => {
+                                                        if (dateTransactions.length > 0) {
+                                                            handleCardClick(dateTransactions[0]);
+                                                        }
+                                                    }}
                                                     sx={{
                                                         height: "100%",
                                                         display: "flex",
                                                         flexDirection: "column",
                                                         bgcolor: "background.paper",
+                                                        cursor: "pointer",
+                                                        transition: "all 0.2s ease-in-out",
                                                         "&:hover": {
-                                                            boxShadow: 2,
+                                                            boxShadow: 3,
+                                                            transform: "translateY(-2px)",
                                                         },
                                                     }}
                                                 >
@@ -117,7 +152,9 @@ export const TransactionList = ({ transactions }: { transactions: Transaction[] 
                                                                         justifyContent: "space-between",
                                                                         alignItems: "center",
                                                                         py: 0.5,
+                                                                        cursor: "pointer",
                                                                     }}
+                                                                    onClick={() => handleCardClick(transaction)}
                                                                 >
                                                                     <Typography variant="body2">
                                                                         {transaction.name}
@@ -171,8 +208,15 @@ export const TransactionList = ({ transactions }: { transactions: Transaction[] 
             </Card>
             <DebugView data={transactions} />
 
+            <TransactionDetailsDialog
+                open={isDialogOpen}
+                onClose={handleCloseDetailsDialog}
+                transaction={selectedTransaction}
+                onEdit={handleEdit}
+                transactions={transactions}
+            />
             {/* Add Transaction Dialog */}
-            <TransactionFormDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} />
+            <TransactionFormDialog openDialog={openDialog} handleCloseDialog={handleCloseAddDialog} />
         </>
     );
 };
