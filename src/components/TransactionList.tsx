@@ -1,21 +1,10 @@
 import AddIcon from "@mui/icons-material/Add";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {
-    Box,
-    Button,
-    Card,
-    CardContent,
-    Collapse,
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    Typography,
-} from "@mui/material";
+import { Box, Button, Card, CardContent, Collapse, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 import type { Transaction } from "../types";
-import TransactionForm from "./TransactionForm";
+import TransactionFormDialog from "./TransactionFormDialog";
 
 export const TransactionList = ({ transactions }: { transactions: Transaction[] }) => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -183,14 +172,7 @@ export const TransactionList = ({ transactions }: { transactions: Transaction[] 
             <DebugView data={transactions} />
 
             {/* Add Transaction Dialog */}
-            <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-                <DialogTitle>Add New Transaction</DialogTitle>
-                <DialogContent>
-                    <Typography variant="body1" sx={{ mt: 2 }}>
-                        <TransactionForm isSubmitting={false} />
-                    </Typography>
-                </DialogContent>
-            </Dialog>
+            <TransactionFormDialog openDialog={openDialog} handleCloseDialog={handleCloseDialog} />
         </>
     );
 };

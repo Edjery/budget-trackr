@@ -1,9 +1,16 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toLocalDateString } from '../utils/dateUtils';
 import type { Transaction, FormValues } from '../types';
 
 export const useTransactionSubmission = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    // Load transactions from localStorage on initial render
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('transactions');
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -34,6 +41,13 @@ export const useTransactionSubmission = () => {
 
     return newTransactions;
   }, []);
+
+  // Save transactions to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('transactions', JSON.stringify(transactions));
+    }
+  }, [transactions]);
 
   const submitTransaction = useCallback(async (
     values: FormValues,
