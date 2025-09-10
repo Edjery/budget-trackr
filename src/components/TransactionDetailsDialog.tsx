@@ -100,18 +100,18 @@ export const TransactionDetailsDialog = ({
                         ✕
                     </Button>
                 </Box>
+
+                <Typography variant="h6" color="textPrimary" fontWeight="bold" gutterBottom>
+                    {new Date(selectedTransaction.date).toLocaleDateString("en-PH", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        weekday: "long",
+                    })}
+                </Typography>
             </DialogTitle>
             <DialogContent>
                 <Box mb={3}>
-                    <Typography variant="h6" color="textPrimary" gutterBottom>
-                        {new Date(selectedTransaction.date).toLocaleDateString("en-PH", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            weekday: "long",
-                        })}
-                    </Typography>
-
                     <TableContainer component={Paper} variant="outlined">
                         <Table size="small">
                             <TableHead>
@@ -161,41 +161,45 @@ export const TransactionDetailsDialog = ({
                         </Table>
                     </TableContainer>
                 </Box>
-
-                <Box mt={2}>
-                    <Typography variant="subtitle2" color="textSecondary">
-                        Total for this day: $
-                        {selectedDateTransactions
-                            .reduce((sum, t) => {
+            </DialogContent>
+            <DialogActions sx={{ p: 2, flexDirection: "column", gap: 2, alignItems: "flex-start" }}>
+                <Box width="100%" display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography fontWeight="bold" my={2}>
+                        Total for this day:{" "}
+                        {(() => {
+                            const total = selectedDateTransactions.reduce((sum, t) => {
                                 const amount = parseFloat(t.amount) || 0;
                                 return t.type === "earnings" ? sum + amount : sum - amount;
-                            }, 0)
-                            .toFixed(2)}
+                            }, 0);
+                            const formattedTotal = Math.abs(total).toFixed(2);
+                            return total < 0 ? `-$${formattedTotal}` : `$${formattedTotal}`;
+                        })()}
                     </Typography>
                 </Box>
-            </DialogContent>
-            <DialogActions sx={{ p: 2, gap: 1, justifyContent: "space-between" }}>
-                <Box sx={{ display: "flex", gap: 1 }}>
-                    {onAddTransaction && (
-                        <Button onClick={onAddTransaction} color="primary" variant="outlined" startIcon={<AddIcon />}>
-                            Add Transaction
-                        </Button>
-                    )}
-                    {onDelete && selectedDateTransactions.length > 0 && (
-                        <Button
-                            onClick={handleDeleteAllClick}
-                            color="error"
-                            variant="outlined"
-                            startIcon={<DeleteIcon />}
-                        >
-                            Delete All
-                        </Button>
-                    )}
-                </Box>
-                <Box>
-                    <Button onClick={onClose} sx={{ mr: 1 }}>
-                        Close
-                    </Button>
+                <Box display="flex" gap={2} width="100%" justifyContent="space-between">
+                    <Box display="flex" gap={1}>
+                        {onAddTransaction && (
+                            <Button
+                                onClick={onAddTransaction}
+                                color="primary"
+                                variant="contained"
+                                startIcon={<AddIcon />}
+                            >
+                                Add
+                            </Button>
+                        )}
+                        {onDelete && selectedDateTransactions.length > 0 && (
+                            <Button
+                                onClick={handleDeleteAllClick}
+                                color="error"
+                                variant="contained"
+                                startIcon={<DeleteIcon />}
+                            >
+                                Delete All
+                            </Button>
+                        )}
+                    </Box>
+                    <Button onClick={onClose}>Close</Button>
                 </Box>
             </DialogActions>
 
