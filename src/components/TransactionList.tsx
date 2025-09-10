@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { Transaction } from "../types";
 import { TransactionCard } from "./TransactionCard";
 import TransactionDetailsDialog from "./TransactionDetailsDialog";
+import usePagination from "../hooks/usePagination";
 
 interface TransactionListProps {
     transactions: Transaction[];
@@ -33,12 +34,25 @@ export const TransactionList = ({
         setTimeout(() => setSelectedDate(null), 300);
     };
 
-    const groupedTransactions = transactions.reduce((acc: Record<string, Transaction[]>, transaction) => {
+    // Group transactions by date first
+    const groupedByDate = transactions.reduce((acc: Record<string, Transaction[]>, transaction) => {
         const dateStr = transaction.date;
         if (!acc[dateStr]) {
             acc[dateStr] = [];
         }
         acc[dateStr].push(transaction);
+        return acc;
+    }, {});
+
+    // Sort dates in descending order (newest first)
+    const sortedDates = Object.keys(groupedByDate).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+    // Paginate the dates
+    const { paginatedItems: paginatedDates, loadMore, hasMore } = usePagination<string>(sortedDates, 11);
+
+    // Create the final grouped transactions object with only the paginated dates
+    const groupedTransactions = paginatedDates.reduce((acc: Record<string, Transaction[]>, date) => {
+        acc[date] = groupedByDate[date];
         return acc;
     }, {});
 
@@ -91,6 +105,13 @@ export const TransactionList = ({
                                       </Grid>
                                   ))}
                     </Grid>
+                    {hasMore && (
+                        <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
+                            <Button variant="outlined" onClick={loadMore} sx={{ mt: 2 }}>
+                                Load More
+                            </Button>
+                        </Box>
+                    )}
                 </CardContent>
             </Card>
             <DebugView data={transactions} />

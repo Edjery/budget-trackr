@@ -18,6 +18,7 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
             onClick={() => onTransactionClick(date)}
             sx={{
                 height: "100%",
+                minHeight: "14rem",
                 display: "flex",
                 flexDirection: "column",
                 cursor: "pointer",
