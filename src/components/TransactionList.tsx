@@ -106,21 +106,21 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                                             boxShadow: 3,
                                                             transform: "translateY(-2px)",
                                                         },
+                                                        cursor: "pointer",
+                                                    }}
+                                                    onClick={() => {
+                                                        if (dateTransactions.length > 0) {
+                                                            handleCardClick(dateTransactions[0]);
+                                                        }
                                                     }}
                                                 >
                                                     {/* Header with Date */}
                                                     <Box
-                                                        onClick={() => {
-                                                            if (dateTransactions.length > 0) {
-                                                                handleCardClick(dateTransactions[0]);
-                                                            }
-                                                        }}
                                                         sx={{
                                                             p: 2,
                                                             pb: 1,
                                                             borderBottom: "1px solid",
                                                             borderColor: "divider",
-                                                            cursor: "pointer",
                                                         }}
                                                     >
                                                         <Typography
@@ -172,9 +172,7 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                                                         justifyContent: "space-between",
                                                                         alignItems: "center",
                                                                         py: 0.5,
-                                                                        cursor: "pointer",
                                                                     }}
-                                                                    onClick={() => handleCardClick(transaction)}
                                                                 >
                                                                     <Typography variant="body2">
                                                                         {transaction.name}
@@ -207,12 +205,6 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                                             alignItems: "center",
                                                             zIndex: 1,
                                                             boxShadow: "0 -2px 8px rgba(0,0,0,0.05)",
-                                                            cursor: "pointer",
-                                                        }}
-                                                        onClick={() => {
-                                                            if (dateTransactions.length > 0) {
-                                                                handleCardClick(dateTransactions[0]);
-                                                            }
                                                         }}
                                                     >
                                                         <Typography variant="subtitle2" fontWeight="bold">
@@ -223,7 +215,7 @@ export const TransactionList = ({ transactions, onEditTransaction, onAddTransact
                                                             fontWeight="bold"
                                                             color={total >= 0 ? "success.main" : "error.main"}
                                                         >
-                                                            {total >= 0 ? "+" : ""}${Math.abs(total).toFixed(2)}
+                                                            {total >= 0 ? "+" : "-"} ${Math.abs(total).toFixed(2)}
                                                         </Typography>
                                                     </Box>
                                                 </Card>
