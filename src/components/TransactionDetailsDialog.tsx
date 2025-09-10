@@ -1,25 +1,26 @@
-import { useState } from "react";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    Typography,
     Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     IconButton,
+    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
+    Typography,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { useState } from "react";
 import type { Transaction } from "../types";
 
 interface TransactionDetailsDialogProps {
@@ -93,12 +94,21 @@ export const TransactionDetailsDialog = ({
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-            <DialogTitle>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
+            <DialogTitle sx={{ m: 0, p: 2 }}>
+                <Box display="flex" justifyContent="space-between">
                     Transaction Details
-                    <Button onClick={onClose} color="inherit">
-                        ✕
-                    </Button>
+                    <IconButton
+                        aria-label="close"
+                        onClick={onClose}
+                        sx={{
+                            position: "absolute",
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
                 </Box>
 
                 <Typography variant="h6" color="textPrimary" fontWeight="bold" gutterBottom>
