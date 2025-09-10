@@ -126,7 +126,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
     };
 
     return (
-        <Box sx={{ p: 3 }}>
+        <Box>
             {/* Date Selection Section */}
             <Box sx={{ mb: 4, p: 3, border: "1px solid", borderColor: "divider", borderRadius: 1 }}>
                 <Typography variant="h6" gutterBottom>

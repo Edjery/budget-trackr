@@ -62,9 +62,7 @@ const TransactionFormDialog = ({
                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     {({ isSubmitting: formikIsSubmitting }) => (
                         <Form>
-                            <Box sx={{ p: 3 }}>
-                                <TransactionForm isSubmitting={isSubmitting || formikIsSubmitting} />
-                            </Box>
+                            <TransactionForm isSubmitting={isSubmitting || formikIsSubmitting} />
                         </Form>
                     )}
                 </Formik>
