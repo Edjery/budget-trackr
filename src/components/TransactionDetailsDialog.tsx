@@ -1,7 +1,8 @@
+import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import {
     Box,
@@ -20,8 +21,10 @@ import {
     TableRow,
     Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useTransactionOrder } from "../hooks/useTransactionOrder";
 import type { Transaction } from "../types";
+import { SortableTransactionRow } from "./SortableTransactionRow";
 
 interface TransactionDetailsDialogProps {
     open: boolean;
@@ -92,6 +95,34 @@ export const TransactionDetailsDialog = ({
         ? groupedTransactions[selectedTransaction.date] || []
         : [];
 
+    // Use the transaction order hook
+    const { sortedTransactions, updateOrder } = useTransactionOrder(selectedTransaction?.date || "");
+
+    // Set up sensors for drag and drop
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 5,
+                tolerance: 5,
+                delay: 100,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    // Handle drag end event
+    const handleDragEnd = useCallback(
+        (event: any) => {
+            const { active, over } = event;
+            if (active.id !== over.id) {
+                updateOrder(active.id, over.id);
+            }
+        },
+        [updateOrder]
+    );
+
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ m: 0, p: 2 }}>
@@ -126,48 +157,35 @@ export const TransactionDetailsDialog = ({
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
+                                    <TableCell width={40}></TableCell>
                                     <TableCell>Name</TableCell>
                                     <TableCell align="right">Amount</TableCell>
                                     <TableCell>Type</TableCell>
                                     <TableCell align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
-                            <TableBody>
-                                {selectedDateTransactions.map((transaction) => (
-                                    <TableRow key={transaction.id}>
-                                        <TableCell>{transaction.name}</TableCell>
-                                        <TableCell
-                                            align="right"
-                                            sx={{
-                                                color: transaction.type === "earnings" ? "success.main" : "error.main",
-                                            }}
-                                        >
-                                            {transaction.type === "earnings" ? "+" : "-"}$
-                                            {parseFloat(transaction.amount).toFixed(2)}
-                                        </TableCell>
-                                        <TableCell sx={{ textTransform: "capitalize" }}>{transaction.type}</TableCell>
-                                        <TableCell align="right">
-                                            <IconButton
-                                                size="small"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    onEdit?.(transaction);
-                                                }}
-                                                color="primary"
-                                            >
-                                                <EditIcon fontSize="small" />
-                                            </IconButton>
-                                            <IconButton
-                                                size="small"
-                                                onClick={(e) => handleDeleteClick(transaction, e)}
-                                                color="error"
-                                            >
-                                                <DeleteIcon fontSize="small" />
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
+                            <DndContext
+                                sensors={sensors}
+                                collisionDetection={closestCenter}
+                                onDragEnd={handleDragEnd}
+                                autoScroll={false}
+                            >
+                                <TableBody>
+                                    <SortableContext
+                                        items={sortedTransactions.map((tx) => tx.id)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
+                                        {sortedTransactions.map((transaction) => (
+                                            <SortableTransactionRow
+                                                key={transaction.id}
+                                                transaction={transaction}
+                                                onEdit={onEdit || (() => {})}
+                                                onDelete={handleDeleteClick}
+                                            />
+                                        ))}
+                                    </SortableContext>
+                                </TableBody>
+                            </DndContext>
                         </Table>
                     </TableContainer>
                 </Box>
