@@ -3,7 +3,7 @@ import { AttachMoney, MoneyOff, AccountBalance } from "@mui/icons-material";
 import type { SummaryCardsProps } from "../types";
 
 export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: SummaryCardsProps) => (
-    <Grid container spacing={3} sx={{ mb: 4 }}>
+    <Grid container spacing={3} sx={{ my: 4 }}>
         {/* Balance Card */}
         <Grid size={{ xs: 12, sm: 4 }} sx={{ "& > *": { width: "100%" } }}>
             <Card elevation={3}>
