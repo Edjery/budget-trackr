@@ -3,10 +3,10 @@ import { useTransactionCalculations } from "../hooks/useTransactionCalculations"
 import { useTransactionEdit } from "../hooks/useTransactionEdit";
 import { useTransactionForm } from "../hooks/useTransactionForm";
 import { useTransactions } from "../hooks/useTransactions";
+import type { FormValues } from "../types";
 import { SummaryCards } from "./SummaryCards";
 import TransactionFormDialog from "./TransactionFormDialog";
 import { TransactionList } from "./TransactionList";
-import type { FormValues } from "../types";
 
 const AppContent = () => {
     const { createEmptyTransactionItem } = useTransactionForm();

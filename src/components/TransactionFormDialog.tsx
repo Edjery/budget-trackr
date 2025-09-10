@@ -1,10 +1,10 @@
+import CloseIcon from "@mui/icons-material/Close";
 import { Box, Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import { Form, Formik } from "formik";
 import { useTransactionForm } from "../hooks/useTransactionForm";
 import useTransactionSubmission from "../hooks/useTransactionSubmission";
 import { type FormValues, validationSchema } from "../types";
 import TransactionForm from "./TransactionForm";
-import CloseIcon from "@mui/icons-material/Close";
 
 interface TransactionFormDialogProps {
     openDialog: boolean;

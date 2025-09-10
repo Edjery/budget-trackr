@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
-import { AppHeader } from "./components/AppHeader";
 import AppContent from "./components/AppContent";
+import { AppHeader } from "./components/AppHeader";
 
 function App() {
     return (

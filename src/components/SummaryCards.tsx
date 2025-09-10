@@ -1,5 +1,5 @@
+import { AccountBalance, AttachMoney, MoneyOff } from "@mui/icons-material";
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
-import { AttachMoney, MoneyOff, AccountBalance } from "@mui/icons-material";
 import type { SummaryCardsProps } from "../types";
 
 export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: SummaryCardsProps) => (

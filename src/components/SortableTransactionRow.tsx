@@ -1,9 +1,9 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { TableRow, TableCell, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { IconButton, TableCell, TableRow } from "@mui/material";
 import type { Transaction } from "../types";
 
 interface SortableTransactionRowProps {
