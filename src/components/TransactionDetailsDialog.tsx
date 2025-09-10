@@ -42,20 +42,37 @@ export const TransactionDetailsDialog = ({
     transactions,
 }: TransactionDetailsDialogProps) => {
     const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
+    const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
 
     const handleDeleteClick = (transaction: Transaction, e: React.MouseEvent) => {
         e.stopPropagation();
         setTransactionToDelete(transaction);
     };
 
+    const handleDeleteAllClick = () => {
+        setShowDeleteAllDialog(true);
+    };
+
     const handleCancelDelete = () => {
         setTransactionToDelete(null);
+        setShowDeleteAllDialog(false);
     };
 
     const handleConfirmDelete = () => {
         if (transactionToDelete) {
             onDelete?.(transactionToDelete);
             setTransactionToDelete(null);
+        }
+    };
+
+    const handleConfirmDeleteAll = () => {
+        if (onDelete && selectedDateTransactions.length > 0) {
+            // Delete all transactions for the selected date
+            selectedDateTransactions.forEach((transaction) => {
+                onDelete(transaction);
+            });
+            setShowDeleteAllDialog(false);
+            onClose();
         }
     };
 
@@ -157,12 +174,24 @@ export const TransactionDetailsDialog = ({
                     </Typography>
                 </Box>
             </DialogContent>
-            <DialogActions sx={{ p: 2, justifyContent: "space-between" }}>
-                {onAddTransaction && (
-                    <Button onClick={onAddTransaction} color="primary" variant="outlined" startIcon={<AddIcon />}>
-                        Add Transaction
-                    </Button>
-                )}
+            <DialogActions sx={{ p: 2, gap: 1, justifyContent: "space-between" }}>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                    {onAddTransaction && (
+                        <Button onClick={onAddTransaction} color="primary" variant="outlined" startIcon={<AddIcon />}>
+                            Add Transaction
+                        </Button>
+                    )}
+                    {onDelete && selectedDateTransactions.length > 0 && (
+                        <Button
+                            onClick={handleDeleteAllClick}
+                            color="error"
+                            variant="outlined"
+                            startIcon={<DeleteIcon />}
+                        >
+                            Delete All
+                        </Button>
+                    )}
+                </Box>
                 <Box>
                     <Button onClick={onClose} sx={{ mr: 1 }}>
                         Close
@@ -170,7 +199,7 @@ export const TransactionDetailsDialog = ({
                 </Box>
             </DialogActions>
 
-            {/* Delete Confirmation Dialog */}
+            {/* Single Transaction Delete Confirmation Dialog */}
             <Dialog open={!!transactionToDelete} onClose={handleCancelDelete} maxWidth="xs" fullWidth>
                 <DialogTitle>
                     <Box display="flex" alignItems="center" gap={1}>
@@ -189,6 +218,35 @@ export const TransactionDetailsDialog = ({
                     </Button>
                     <Button onClick={handleConfirmDelete} color="error" variant="contained" startIcon={<DeleteIcon />}>
                         Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete All Confirmation Dialog */}
+            <Dialog open={showDeleteAllDialog} onClose={handleCancelDelete} maxWidth="xs" fullWidth>
+                <DialogTitle>
+                    <Box display="flex" alignItems="center" gap={1}>
+                        <WarningAmberIcon color="error" />
+                        <span>Delete All Transactions</span>
+                    </Box>
+                </DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Are you sure you want to delete all {selectedDateTransactions.length} transactions for this
+                        date? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 2, justifyContent: "flex-end" }}>
+                    <Button onClick={handleCancelDelete} color="inherit">
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleConfirmDeleteAll}
+                        color="error"
+                        variant="contained"
+                        startIcon={<DeleteIcon />}
+                    >
+                        Delete All
                     </Button>
                 </DialogActions>
             </Dialog>
