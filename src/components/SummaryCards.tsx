@@ -4,60 +4,52 @@ import type { SummaryCardsProps } from "../types";
 import { formatCurrency } from "../utils/currencyUtils";
 import { useSettings } from "../hooks/useSettings";
 
-export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: SummaryCardsProps) => {
+interface SummaryCardProps {
+    title: string;
+    value: number;
+    icon: React.ReactNode;
+    color: "primary" | "success" | "error";
+    isBalance?: boolean;
+}
+
+const SummaryCard = ({ title, value, icon, color, isBalance = false }: SummaryCardProps) => {
     const { settings } = useSettings();
+    const textColor = isBalance ? (value >= 0 ? "success.main" : "error.main") : `${color}.main`;
+
     return (
-        <Grid container spacing={3} sx={{ my: 4 }}>
-            {/* Balance Card */}
-            <Grid size={{ xs: 12, sm: 4 }} sx={{ "& > *": { width: "100%" } }}>
-                <Card elevation={3}>
-                    <CardContent>
-                        <Box display="flex" alignItems="center" mb={2}>
-                            <AccountBalance color="success" sx={{ mr: 1 }} />
-                            <Typography variant="h6" color="success">
-                                Balance
-                            </Typography>
-                        </Box>
-                        <Typography variant="h4" color={balance >= 0 ? "success.main" : "error.main"}>
-                            {formatCurrency(balance, settings?.currency.code)}
+        <Grid size={{ xs: 12, sm: 4 }}>
+            <Card elevation={3} sx={{ height: "100%" }}>
+                <CardContent>
+                    <Box display="flex" alignItems="center" mb={2}>
+                        {icon}
+                        <Typography variant="h6" color={color} sx={{ ml: 1 }}>
+                            {title}
                         </Typography>
-                    </CardContent>
-                </Card>
-            </Grid>
-
-            {/* Earnings Card */}
-            <Grid size={{ xs: 12, sm: 4 }} sx={{ "& > *": { width: "100%" } }}>
-                <Card elevation={3}>
-                    <CardContent>
-                        <Box display="flex" alignItems="center" mb={2}>
-                            <AttachMoney color="primary" sx={{ mr: 1 }} />
-                            <Typography variant="h6" color="primary">
-                                Total Earnings
-                            </Typography>
-                        </Box>
-                        <Typography variant="h4" color="primary">
-                            {formatCurrency(totalEarnings, settings?.currency.code)}
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </Grid>
-
-            {/* Spendings Card */}
-            <Grid size={{ xs: 12, sm: 4 }} sx={{ "& > *": { width: "100%" } }}>
-                <Card elevation={3}>
-                    <CardContent>
-                        <Box display="flex" alignItems="center" mb={2}>
-                            <MoneyOff color="error" sx={{ mr: 1 }} />
-                            <Typography variant="h6" color="error">
-                                Total Spendings
-                            </Typography>
-                        </Box>
-                        <Typography variant="h4" color="error.main">
-                            {formatCurrency(totalSpendings, settings?.currency.code)}
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </Grid>
+                    </Box>
+                    <Typography variant="h4" color={textColor}>
+                        {formatCurrency(value, settings?.currency.code)}
+                    </Typography>
+                </CardContent>
+            </Card>
         </Grid>
     );
 };
+
+export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: SummaryCardsProps) => (
+    <Grid container spacing={3} sx={{ my: 4 }}>
+        <SummaryCard
+            title="Balance"
+            value={balance}
+            icon={<AccountBalance color={balance >= 0 ? "success" : "error"} />}
+            color={balance >= 0 ? "success" : "error"}
+            isBalance
+        />
+        <SummaryCard
+            title="Total Earnings"
+            value={totalEarnings}
+            icon={<AttachMoney color="primary" />}
+            color="primary"
+        />
+        <SummaryCard title="Total Spendings" value={totalSpendings} icon={<MoneyOff color="error" />} color="error" />
+    </Grid>
+);
