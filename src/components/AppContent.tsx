@@ -33,23 +33,19 @@ const AppContent = () => {
     const { transactions, updateTransaction, addTransaction, deleteTransaction } = useTransactions();
 
     // Filter transactions based on date range if provided
-    const filteredTransactions =
-        dateRange.start || dateRange.end
-            ? transactions.filter((tx) => {
-                  const txDate = dayjs(tx.date);
-                  const startDate = dateRange.start?.startOf("day");
-                  const endDate = dateRange.end?.endOf("day");
+    const filteredTransactions = (() => {
+        if (!dateRange.start && !dateRange.end) return transactions;
 
-                  if (startDate && endDate) {
-                      return txDate.isSameOrAfter(startDate, "day") && txDate.isSameOrBefore(endDate, "day");
-                  } else if (startDate) {
-                      return txDate.isSameOrAfter(startDate, "day");
-                  } else if (endDate) {
-                      return txDate.isSameOrBefore(endDate, "day");
-                  }
-                  return true;
-              })
-            : transactions;
+        const startDate = dateRange.start?.startOf("day");
+        const endDate = dateRange.end?.endOf("day");
+
+        return transactions.filter((tx) => {
+            const txDate = dayjs(tx.date);
+            const isAfterStart = !startDate || txDate.isSameOrAfter(startDate, "day");
+            const isBeforeEnd = !endDate || txDate.isSameOrBefore(endDate, "day");
+            return isAfterStart && isBeforeEnd;
+        });
+    })();
 
     const { totalEarnings, totalSpendings, balance } = useTransactionCalculations(filteredTransactions);
 
