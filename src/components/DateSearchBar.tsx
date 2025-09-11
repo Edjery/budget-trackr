@@ -1,4 +1,4 @@
-import { Box, Card, Stack, Typography } from "@mui/material";
+import { Box, Card, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
 import { useCallback } from "react";
@@ -14,6 +14,8 @@ interface DateSearchBarProps {
 }
 
 export const DateSearchBar = ({ onDateChange, dateRange }: DateSearchBarProps) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const { start, end } = dateRange;
 
     const handleStartDateChange = useCallback(
@@ -33,7 +35,7 @@ export const DateSearchBar = ({ onDateChange, dateRange }: DateSearchBarProps) =
     return (
         <Card elevation={3} sx={{ mt: 4, p: 2 }}>
             <Box sx={{ p: 2, backgroundColor: "background.paper" }}>
-                <Stack direction="row" spacing={2}>
+                <Stack direction={isMobile ? "column" : "row"} spacing={2}>
                     <Typography variant="h6" color="textSecondary" sx={{ display: "flex", alignItems: "center" }}>
                         Select Date Range:
                     </Typography>
