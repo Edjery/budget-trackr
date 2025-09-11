@@ -1,4 +1,4 @@
-import { Box, useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -13,7 +13,6 @@ import { DateSearchBar } from "./DateSearchBar";
 import { SummaryCards } from "./SummaryCards";
 import TransactionFormDialog from "./TransactionFormDialog";
 import { TransactionList } from "./TransactionList";
-import type { AppTheme } from "../theme";
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);

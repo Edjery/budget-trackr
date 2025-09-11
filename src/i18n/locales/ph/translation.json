@@ -1,0 +1,38 @@
+{
+  "settings": {
+    "title": "Mga Setting",
+    "appearance": {
+      "title": "Itsura",
+      "theme": {
+        "label": "Tema",
+        "light": "Maliwanag",
+        "dark": "Madilim",
+        "system": "Awtomatiko"
+      },
+      "fontSize": "Laki ng Letra",
+      "compactMode": "Kompaktong Ayos"
+    },
+    "currency": {
+      "title": "Salapi",
+      "selectCurrency": "Pumili ng Salapi"
+    },
+    "language": {
+      "title": "Wika",
+      "selectLanguage": "Pumili ng Wika"
+    },
+    "save": "I-save",
+    "cancel": "Kanselahin"
+  },
+  "summary": {
+    "balance": "Balanse",
+    "earnings": "Kabuuang Kita",
+    "expenses": "Kabuuang Gastos"
+  },
+  "common": {
+    "required": "Kinakailangan ang patlang na ito"
+  },
+  "languages": {
+    "en": "Ingles",
+    "ph": "Filipino"
+  }
+}

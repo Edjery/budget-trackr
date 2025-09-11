@@ -109,7 +109,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                                 {/* Language Settings */}
                                 <FormikSelect name="language" label="Language" size="small">
                                     <MenuItem value="en">English</MenuItem>
-                                    <MenuItem value="tl">Filipino</MenuItem>
+                                    <MenuItem value="ph">Filipino</MenuItem>
                                 </FormikSelect>
                             </Box>
                         </DialogContent>

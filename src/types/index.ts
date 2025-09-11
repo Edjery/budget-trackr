@@ -1,5 +1,11 @@
 import * as Yup from 'yup';
 
+export interface Language {
+  code: string;
+  name: string;
+  nativeName: string;
+}
+
 export interface TransactionItem {
   id: string;
   type: 'earnings' | 'spendings';

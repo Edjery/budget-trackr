@@ -1,0 +1,34 @@
+{
+  "settings": {
+    "title": "Settings",
+    "appearance": {
+      "title": "Appearance",
+      "theme": {
+        "label": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "fontSize": "Font Size",
+      "compactMode": "Compact Mode"
+    },
+    "currency": {
+      "title": "Currency",
+      "selectCurrency": "Select Currency"
+    },
+    "language": {
+      "title": "Language",
+      "selectLanguage": "Select Language"
+    },
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "summary": {
+    "balance": "Balance",
+    "earnings": "Total Earnings",
+    "expenses": "Total Expenses"
+  },
+  "common": {
+    "required": "This field is required"
+  }
+}
