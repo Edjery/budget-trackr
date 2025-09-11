@@ -24,6 +24,17 @@ export const SortableTransactionRow = ({ transaction, onEdit, onDelete }: Sortab
         },
     });
 
+    // Add touch-action and user-select to prevent default touch behaviors
+    const dragHandleProps = {
+        ...attributes,
+        ...listeners,
+        style: {
+            touchAction: "none" as const,
+            WebkitUserSelect: "none" as const,
+            userSelect: "none" as const,
+        },
+    };
+
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
@@ -50,13 +61,25 @@ export const SortableTransactionRow = ({ transaction, onEdit, onDelete }: Sortab
             }}
         >
             <TableCell
-                {...attributes}
-                {...listeners}
+                {...dragHandleProps}
                 sx={{
-                    width: "40px",
+                    width: 40,
                     p: 0,
                     textAlign: "center",
                     cursor: isDragging ? "grabbing" : "grab",
+                    "&:active": {
+                        cursor: "grabbing" as const,
+                        backgroundColor: "action.hover",
+                    },
+                    // Increase touch target size for better mobile experience
+                    "&::before": {
+                        content: '""',
+                        position: "absolute",
+                        top: "-10px",
+                        right: "-10px",
+                        bottom: "-10px",
+                        left: "-10px",
+                    },
                 }}
             >
                 <DragIndicatorIcon
