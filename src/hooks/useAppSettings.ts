@@ -1,16 +1,17 @@
-import { useEffect } from 'react';
-import { useUserSettings } from '../contexts/UserSettingsContext';
-import { CURRENCIES, setCurrency } from '../utils/currencyUtils';
+import { useCallback, useEffect } from 'react';
+import { useSettings } from './useSettings';
+import { CURRENCIES } from '../utils/currencyUtils';
 
 export const useAppSettings = () => {
-    const { settings, updateSettings, isDarkMode } = useUserSettings();
-
-    // Update currency when settings change
-    useEffect(() => {
-        if (settings.currency?.code) {
-            setCurrency(settings.currency.code);
-        }
-    }, [settings.currency?.code]);
+    const { 
+        settings, 
+        updateSettings, 
+        updateTheme, 
+        updateCurrency, 
+        updateLanguage,
+        isUpdating,
+        error
+    } = useSettings();
 
     // Handle system theme changes
     useEffect(() => {
@@ -18,49 +19,48 @@ export const useAppSettings = () => {
         
         const handleChange = () => {
             if (settings.appearance.theme === 'system') {
-                updateSettings({
-                    appearance: { theme: 'system' }
-                });
+                updateTheme('system');
             }
         };
 
         mediaQuery.addEventListener('change', handleChange);
         return () => mediaQuery.removeEventListener('change', handleChange);
-    }, [settings.appearance.theme, updateSettings]);
+    }, [settings.appearance.theme, updateTheme]);
 
     const toggleTheme = () => {
-        const newTheme = settings.appearance.theme === 'dark' 
-            ? 'light' 
-            : settings.appearance.theme === 'light' 
-                ? 'system' 
-                : 'dark';
-        
-        updateSettings({
-            appearance: { theme: newTheme }
-        });
+        const newTheme = settings.appearance.theme === 'dark' ? 'light' : 'dark';
+        updateTheme(newTheme);
     };
 
-    const updateCurrency = (currencyCode: string) => {
-        if (CURRENCIES[currencyCode]) {
-            updateSettings({
-                currency: { code: currencyCode }
-            });
+    // Wrapper for currency update to ensure proper formatting
+    const handleCurrencyUpdate = useCallback((code: string) => {
+        const currency = CURRENCIES[code] || {
+            code,
+            symbol: '$',
+            name: 'US Dollar',
+            locale: 'en-US'
+        };
+        updateCurrency(currency);
+    }, [updateCurrency]);
+
+    // Initialize currency on first load if needed
+    useEffect(() => {
+        if (settings.currency?.code && !CURRENCIES[settings.currency.code]) {
+            handleCurrencyUpdate('PHP');
         }
-    };
-
-    const updateLanguage = (language: string) => {
-        updateSettings({
-            language
-        });
-    };
+    }, [settings.currency?.code, handleCurrencyUpdate]);
 
     return {
+        settings,
+        updateSettings,
+        isDarkMode: settings.appearance.theme === 'dark',
         theme: settings.appearance.theme,
-        isDarkMode,
-        currency: settings.currency.code,
-        language: settings.language,
-        toggleTheme,
-        updateCurrency,
+        currency: settings.currency?.code || 'PHP',
+        language: settings.language || 'en',
+        updateCurrency: handleCurrencyUpdate,
         updateLanguage,
+        toggleTheme,
+        isLoading: isUpdating,
+        error
     };
 };

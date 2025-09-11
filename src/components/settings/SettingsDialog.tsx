@@ -4,17 +4,23 @@ import {
     DialogContent,
     DialogActions,
     Button,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
     Box,
+    CircularProgress,
+    MenuItem,
 } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material/Select";
+import { Formik, Form, type FormikHelpers } from "formik";
+import * as Yup from "yup";
+import { useCallback, useEffect } from "react";
 import { CURRENCIES } from "../../utils/currencyUtils";
 import { useAppSettings } from "../../hooks/useAppSettings";
-import { useUserSettings } from "../../contexts/UserSettingsContext";
 import type { ThemeMode } from "../../types/userSettings";
+import { FormikSelect } from "../form/FormikSelect";
+
+interface SettingsFormValues {
+    theme: ThemeMode;
+    currency: string;
+    language: string;
+}
 
 interface SettingsDialogProps {
     open: boolean;
@@ -22,87 +28,110 @@ interface SettingsDialogProps {
 }
 
 export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
-    const { theme, currency, language, updateCurrency, updateLanguage } = useAppSettings();
+    const { settings, updateSettings } = useAppSettings();
 
-    const handleCurrencyChange = (event: SelectChangeEvent) => {
-        updateCurrency(event.target.value);
+    // Log current settings for debugging
+    useEffect(() => {
+        if (open) {
+            console.log("Current settings in dialog:", settings);
+        }
+    }, [open, settings]);
+
+    const getInitialValues = useCallback(
+        (): SettingsFormValues => ({
+            theme: settings.appearance?.theme || "system",
+            currency: settings.currency?.code || "PHP",
+            language: settings.language || "en",
+        }),
+        [settings]
+    );
+
+    const initialValues = getInitialValues();
+
+    const validationSchema = Yup.object().shape({
+        theme: Yup.string().oneOf(["light", "dark", "system"]).required("Required"),
+        currency: Yup.string().required("Required"),
+        language: Yup.string().required("Required"),
+    });
+
+    const handleSubmit = async (values: SettingsFormValues, { setSubmitting }: FormikHelpers<SettingsFormValues>) => {
+        try {
+            await updateSettings({
+                appearance: { theme: values.theme },
+                currency: {
+                    ...CURRENCIES[values.currency],
+                    code: values.currency,
+                },
+                language: values.language,
+            });
+            setSubmitting(false);
+            onClose();
+        } catch (error) {
+            console.error("Failed to save settings:", error);
+            setSubmitting(false);
+        }
     };
-
-    const handleLanguageChange = (event: SelectChangeEvent) => {
-        updateLanguage(event.target.value);
-    };
-
-    const { updateSettings } = useUserSettings();
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-            <DialogTitle>Settings</DialogTitle>
-            <DialogContent dividers>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
-                    {/* Theme Settings */}
-                    <Box>
-                        <FormControl fullWidth size="small" sx={{ mt: 1 }}>
-                            <InputLabel id="theme-select-label">Theme</InputLabel>
-                            <Select
-                                labelId="theme-select-label"
-                                id="theme-select"
-                                value={theme}
-                                label="Theme"
-                                onChange={(e) =>
-                                    updateSettings({
-                                        appearance: { theme: e.target.value as ThemeMode },
-                                    })
-                                }
-                            >
-                                <MenuItem value="system">System Default</MenuItem>
-                                <MenuItem value="light">Light</MenuItem>
-                                <MenuItem value="dark">Dark</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
+            <Formik
+                key={JSON.stringify(initialValues)} // Force re-render when initialValues change
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmit}
+                enableReinitialize
+            >
+                {({ isSubmitting, dirty, resetForm }) => (
+                    <Form>
+                        <DialogTitle>Settings</DialogTitle>
+                        <DialogContent dividers>
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
+                                {/* Theme Settings */}
+                                <FormikSelect name="theme" label="Theme" size="small">
+                                    <MenuItem value="system">System Default</MenuItem>
+                                    <MenuItem value="light">Light</MenuItem>
+                                    <MenuItem value="dark">Dark</MenuItem>
+                                </FormikSelect>
 
-                    {/* Currency Settings */}
-                    <Box>
-                        <FormControl fullWidth size="small" sx={{ mt: 1 }}>
-                            <InputLabel id="currency-select-label">Currency</InputLabel>
-                            <Select
-                                labelId="currency-select-label"
-                                id="currency-select"
-                                value={currency}
-                                label="Currency"
-                                onChange={handleCurrencyChange}
-                            >
-                                {Object.values(CURRENCIES).map((curr) => (
-                                    <MenuItem key={curr.code} value={curr.code}>
-                                        {`${curr.name} (${curr.symbol})`}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
+                                {/* Currency Settings */}
+                                <FormikSelect name="currency" label="Currency" size="small">
+                                    {Object.values(CURRENCIES).map((curr) => (
+                                        <MenuItem key={curr.code} value={curr.code}>
+                                            {`${curr.name} (${curr.symbol})`}
+                                        </MenuItem>
+                                    ))}
+                                </FormikSelect>
 
-                    {/* Language Settings */}
-                    <Box>
-                        <FormControl fullWidth size="small" sx={{ mt: 1 }}>
-                            <InputLabel id="language-select-label">Language</InputLabel>
-                            <Select
-                                labelId="language-select-label"
-                                id="language-select"
-                                value={language}
-                                label="Language"
-                                onChange={handleLanguageChange}
+                                {/* Language Settings */}
+                                <FormikSelect name="language" label="Language" size="small">
+                                    <MenuItem value="en">English</MenuItem>
+                                    <MenuItem value="tl">Filipino</MenuItem>
+                                </FormikSelect>
+                            </Box>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                onClick={() => {
+                                    resetForm();
+                                    onClose();
+                                }}
+                                color="inherit"
                             >
-                                <MenuItem value="en">English</MenuItem>
-                                <MenuItem value="tl">Filipino</MenuItem>
-                                {/* Add more languages as needed */}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </Box>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose}>Close</Button>
-            </DialogActions>
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                disabled={isSubmitting || !dirty}
+                                startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+                            >
+                                {isSubmitting ? "Saving..." : "Save Changes"}
+                            </Button>
+                        </DialogActions>
+                    </Form>
+                )}
+            </Formik>
         </Dialog>
     );
 };

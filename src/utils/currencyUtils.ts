@@ -96,20 +96,22 @@ export const getCurrency = (code: string): Currency | undefined => {
 type FormatCurrencyOptions = {
     showSymbol?: boolean;
     decimalPlaces?: number;
+    currency?: string;
 };
 
+// Format currency with proper symbol and number formatting
 export const formatCurrency = (
     amount: number,
-    options: FormatCurrencyOptions = { showSymbol: true, decimalPlaces: 2 }
+    code: string = "PHP",
 ): string => {
-    const { showSymbol = true, decimalPlaces = 2 } = options;
-    
-    if (showSymbol) {
-        return `${CURRENCY.symbol}${amount.toFixed(decimalPlaces)}`;
-    }
-    
-    return amount.toFixed(decimalPlaces);
+    const currencyData = CURRENCIES[code] || CURRENCY;
+    const isNegative = amount < 0;
+    const absoluteAmount = Math.abs(amount);
+
+    const formattedNumber = `${isNegative ? "-" : ""}${currencyData.symbol}${absoluteAmount}`
+    return formattedNumber
 };
+
 
 export const formatCurrencyWithCommas = (
     amount: number,

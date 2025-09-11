@@ -1,17 +1,25 @@
 import { Box, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import AppContent from "./components/AppContent";
 import { AppHeader } from "./components/AppHeader";
-import { UserSettingsProvider, useUserSettings } from "./contexts/UserSettingsContext";
+import { useSettings } from "./hooks/useSettings";
 
-const AppContentWithTheme = () => {
-    const { isDarkMode } = useUserSettings();
+function App() {
+    const { settings, updateTheme } = useSettings();
+    const [darkMode, setDarkMode] = useState(settings?.appearance?.theme === "dark");
+
+    // Update dark mode when settings change
+    useEffect(() => {
+        if (settings?.appearance?.theme) {
+            setDarkMode(settings.appearance.theme === "dark");
+        }
+    }, [settings?.appearance?.theme]);
 
     const theme = useMemo(
         () =>
             createTheme({
                 palette: {
-                    mode: isDarkMode ? "dark" : "light",
+                    mode: darkMode ? "dark" : "light",
                     primary: {
                         main: "#1976d2",
                     },
@@ -20,25 +28,22 @@ const AppContentWithTheme = () => {
                     },
                 },
             }),
-        [isDarkMode]
+        [darkMode]
     );
+
+    const toggleDarkMode = () => {
+        const newTheme = darkMode ? "light" : "dark";
+        updateTheme(newTheme);
+    };
 
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <Box sx={{ flexGrow: 1 }}>
-                <AppHeader />
+                <AppHeader onToggleDarkMode={toggleDarkMode} darkMode={darkMode} />
                 <AppContent />
             </Box>
         </ThemeProvider>
-    );
-};
-
-function App() {
-    return (
-        <UserSettingsProvider>
-            <AppContentWithTheme />
-        </UserSettingsProvider>
     );
 }
 

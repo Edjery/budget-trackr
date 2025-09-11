@@ -1,4 +1,4 @@
-import { AccountBalanceWallet, Settings } from "@mui/icons-material";
+import { AccountBalanceWallet, Settings, Brightness4, Brightness7 } from "@mui/icons-material";
 import { AppBar, Box, Toolbar, Typography, IconButton, Tooltip } from "@mui/material";
 import React, { useState } from "react";
 import { SettingsDialog } from "./settings/SettingsDialog";
@@ -6,11 +6,15 @@ import { SettingsDialog } from "./settings/SettingsDialog";
 interface AppHeaderProps {
     title?: string;
     subtitle?: string;
+    darkMode: boolean;
+    onToggleDarkMode: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
     title = "Budgeting Budgeteer",
     subtitle = "Track and estimate monthly earnings and spendings for your budget needs",
+    darkMode,
+    onToggleDarkMode,
 }) => {
     const [settingsOpen, setSettingsOpen] = useState(false);
     return (
@@ -59,20 +63,19 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                         {subtitle}
                     </Typography>
                 </Box>
+                <Box sx={{ flexGrow: 1 }} />
+                <Tooltip title={`Toggle ${darkMode ? "Light" : "Dark"} Mode`}>
+                    <IconButton color="inherit" onClick={onToggleDarkMode} aria-label="toggle dark mode">
+                        {darkMode ? <Brightness7 /> : <Brightness4 />}
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Settings">
-                    <IconButton 
-                        color="inherit" 
-                        onClick={() => setSettingsOpen(true)}
-                        aria-label="settings"
-                    >
+                    <IconButton color="inherit" onClick={() => setSettingsOpen(true)} aria-label="settings">
                         <Settings />
                     </IconButton>
                 </Tooltip>
             </Toolbar>
-            <SettingsDialog 
-                open={settingsOpen} 
-                onClose={() => setSettingsOpen(false)} 
-            />
+            <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
         </AppBar>
     );
 };

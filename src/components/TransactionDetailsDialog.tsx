@@ -23,8 +23,10 @@ import {
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
+import { useSettings } from "../hooks/useSettings";
 import { useTransactionOrder } from "../hooks/useTransactionOrder";
 import type { Transaction } from "../types";
+import { formatCurrency } from "../utils/currencyUtils";
 import { SortableTransactionRow } from "./SortableTransactionRow";
 
 interface TransactionDetailsDialogProps {
@@ -46,9 +48,9 @@ export const TransactionDetailsDialog = ({
     onAddTransaction,
     transactions,
 }: TransactionDetailsDialogProps) => {
+    const { settings } = useSettings();
     const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
     const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
-
     const handleDeleteClick = (transaction: Transaction, e: React.MouseEvent) => {
         e.stopPropagation();
         setTransactionToDelete(transaction);
@@ -148,7 +150,7 @@ export const TransactionDetailsDialog = ({
                     </IconButton>
                 </Box>
 
-                <Typography variant="h6" color="textPrimary" fontWeight="bold" gutterBottom>
+                <Typography color="textPrimary" fontWeight="bold" gutterBottom>
                     {new Date(selectedTransaction.date).toLocaleDateString("en-PH", {
                         year: "numeric",
                         month: "long",
@@ -177,19 +179,21 @@ export const TransactionDetailsDialog = ({
                                 autoScroll={false}
                             >
                                 <TableBody>
-                                    <SortableContext
-                                        items={sortedTransactions.map((tx) => tx.id)}
-                                        strategy={verticalListSortingStrategy}
-                                    >
-                                        {sortedTransactions.map((transaction) => (
-                                            <SortableTransactionRow
-                                                key={transaction.id}
-                                                transaction={transaction}
-                                                onEdit={onEdit || (() => {})}
-                                                onDelete={handleDeleteClick}
-                                            />
-                                        ))}
-                                    </SortableContext>
+                                    <>
+                                        <SortableContext
+                                            items={sortedTransactions.map((tx) => tx.id)}
+                                            strategy={verticalListSortingStrategy}
+                                        >
+                                            {sortedTransactions.map((transaction) => (
+                                                <SortableTransactionRow
+                                                    key={transaction.id}
+                                                    transaction={transaction}
+                                                    onEdit={onEdit || (() => {})}
+                                                    onDelete={handleDeleteClick}
+                                                />
+                                            ))}
+                                        </SortableContext>
+                                    </>
                                 </TableBody>
                             </DndContext>
                         </Table>
@@ -205,8 +209,8 @@ export const TransactionDetailsDialog = ({
                                 const amount = parseFloat(t.amount) || 0;
                                 return t.type === "earnings" ? sum + amount : sum - amount;
                             }, 0);
-                            const formattedTotal = Math.abs(total).toFixed(2);
-                            return total < 0 ? `-$${formattedTotal}` : `$${formattedTotal}`;
+
+                            return formatCurrency(total, settings?.currency.code);
                         })()}
                     </Typography>
                 </Box>

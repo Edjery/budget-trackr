@@ -1,6 +1,7 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import type { Transaction } from "../types";
 import { formatCurrency } from "../utils/currencyUtils";
+import useSettings from "../hooks/useSettings";
 
 interface TransactionCardProps {
     date: string;
@@ -9,6 +10,7 @@ interface TransactionCardProps {
 }
 
 export const TransactionCard = ({ date, transactions, onTransactionClick }: TransactionCardProps) => {
+    const { settings } = useSettings();
     const total = transactions.reduce((sum, t) => {
         const amount = parseFloat(t.amount);
         return t.type === "earnings" ? sum + amount : sum - amount;
@@ -56,7 +58,7 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
                                     sx={{ fontWeight: "medium" }}
                                 >
                                     {transaction.type === "earnings" ? "+" : "-"}
-                                    {formatCurrency(parseFloat(transaction.amount))}
+                                    {formatCurrency(parseFloat(transaction.amount), settings?.currency.code)}
                                 </Typography>
                             </Box>
                         ))}
@@ -84,8 +86,7 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
                         color={total >= 0 ? "success.main" : "error.main"}
                         sx={{ fontWeight: "bold" }}
                     >
-                        {total >= 0 ? "+" : ""}
-                        {formatCurrency(Math.abs(total))}
+                        {formatCurrency(total, settings?.currency.code)}
                     </Typography>
                 </Box>
             </CardContent>
