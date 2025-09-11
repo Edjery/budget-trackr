@@ -68,20 +68,29 @@ export const CURRENCIES: Record<string, Currency> = {
     }
 } as const;
 
-// Default to PHP
+// Default to PHP - will be overridden by user settings
 export let CURRENCY: Currency = CURRENCIES.PHP;
 
 /**
  * Set the active currency
  * @param currencyCode - ISO 4217 currency code (e.g., 'USD', 'EUR', 'PHP')
  */
-export const setCurrency = (currencyCode: string) => {
+export const setCurrency = (currencyCode: string): boolean => {
     const newCurrency = CURRENCIES[currencyCode];
     if (newCurrency) {
         CURRENCY = newCurrency;
+        // Dispatch event for components that need to react to currency changes
+        window.dispatchEvent(new CustomEvent('currencyChanged', { detail: currencyCode }));
         return true;
     }
     return false;
+};
+
+/**
+ * Get currency by code
+ */
+export const getCurrency = (code: string): Currency | undefined => {
+    return CURRENCIES[code];
 };
 
 type FormatCurrencyOptions = {

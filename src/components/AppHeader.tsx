@@ -1,6 +1,7 @@
-import { AccountBalanceWallet } from "@mui/icons-material";
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
-import React from "react";
+import { AccountBalanceWallet, Settings } from "@mui/icons-material";
+import { AppBar, Box, Toolbar, Typography, IconButton, Tooltip } from "@mui/material";
+import React, { useState } from "react";
+import { SettingsDialog } from "./settings/SettingsDialog";
 
 interface AppHeaderProps {
     title?: string;
@@ -11,6 +12,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     title = "Budgeting Budgeteer",
     subtitle = "Track and estimate monthly earnings and spendings for your budget needs",
 }) => {
+    const [settingsOpen, setSettingsOpen] = useState(false);
     return (
         <AppBar
             position="static"
@@ -48,6 +50,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                             opacity: 0.9,
                             maxWidth: "600px",
                             fontSize: "0.8rem",
+                            mr: 2,
                             "@media (min-width: 600px)": {
                                 fontSize: "0.875rem",
                             },
@@ -56,7 +59,20 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                         {subtitle}
                     </Typography>
                 </Box>
+                <Tooltip title="Settings">
+                    <IconButton 
+                        color="inherit" 
+                        onClick={() => setSettingsOpen(true)}
+                        aria-label="settings"
+                    >
+                        <Settings />
+                    </IconButton>
+                </Tooltip>
             </Toolbar>
+            <SettingsDialog 
+                open={settingsOpen} 
+                onClose={() => setSettingsOpen(false)} 
+            />
         </AppBar>
     );
 };
