@@ -64,15 +64,30 @@ export const useSettings = () => {
 
     // Individual update functions
     const updateTheme = (theme: UserSettings['appearance']['theme']) => {
-        updateSettings({ appearance: { theme } });
+        updateSettings({
+            ...settings,
+            appearance: {
+                ...settings.appearance,
+                theme
+            }
+        });
     };
 
     const updateCurrency = (currency: UserSettings['currency']) => {
-        updateSettings({ currency });
+        updateSettings({
+            ...settings,
+            currency: {
+                ...settings.currency,
+                ...currency
+            }
+        });
     };
 
     const updateLanguage = (language: string) => {
-        updateSettings({ language });
+        updateSettings({
+            ...settings,
+            language
+        });
     };
 
     return {

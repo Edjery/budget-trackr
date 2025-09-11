@@ -57,7 +57,11 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
     const handleSubmit = async (values: SettingsFormValues, { setSubmitting }: FormikHelpers<SettingsFormValues>) => {
         try {
             await updateSettings({
-                appearance: { theme: values.theme },
+                ...settings,
+                appearance: {
+                    ...settings.appearance,
+                    theme: values.theme,
+                },
                 currency: {
                     ...CURRENCIES[values.currency],
                     code: values.currency,
