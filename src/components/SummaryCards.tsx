@@ -13,8 +13,8 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
                 <Card elevation={3}>
                     <CardContent>
                         <Box display="flex" alignItems="center" mb={2}>
-                            <AccountBalance color={balance >= 0 ? "success" : "error"} sx={{ mr: 1 }} />
-                            <Typography variant="h6" color="textSecondary">
+                            <AccountBalance color="success" sx={{ mr: 1 }} />
+                            <Typography variant="h6" color="success">
                                 Balance
                             </Typography>
                         </Box>
@@ -31,7 +31,7 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
                     <CardContent>
                         <Box display="flex" alignItems="center" mb={2}>
                             <AttachMoney color="primary" sx={{ mr: 1 }} />
-                            <Typography variant="h6" color="textSecondary">
+                            <Typography variant="h6" color="primary">
                                 Total Earnings
                             </Typography>
                         </Box>
@@ -48,7 +48,7 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
                     <CardContent>
                         <Box display="flex" alignItems="center" mb={2}>
                             <MoneyOff color="error" sx={{ mr: 1 }} />
-                            <Typography variant="h6" color="textSecondary">
+                            <Typography variant="h6" color="error">
                                 Total Spendings
                             </Typography>
                         </Box>

@@ -1,7 +1,8 @@
 import { AccountBalanceWallet, Settings, Brightness4, Brightness7 } from "@mui/icons-material";
-import { AppBar, Box, Toolbar, Typography, IconButton, Tooltip } from "@mui/material";
+import { AppBar, Box, Toolbar, Typography, IconButton, Tooltip, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { SettingsDialog } from "./settings/SettingsDialog";
+import type { AppTheme } from "../theme";
 
 interface AppHeaderProps {
     title?: string;
@@ -17,12 +18,17 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
     onToggleDarkMode,
 }) => {
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const theme = useTheme() as AppTheme;
+
     return (
         <AppBar
-            position="static"
+            position="fixed"
             sx={{
-                backgroundColor: "#1976d2",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                zIndex: theme.zIndex.drawer + 1,
+                backgroundColor: "custom.header.background",
+                boxShadow: 1,
+                height: theme.custom.header.height,
+                justifyContent: "center",
             }}
         >
             <Toolbar>
@@ -30,7 +36,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                     sx={{
                         mr: 2,
                         fontSize: "2rem",
-                        color: "white",
+                        color: "primary.contrastText",
                     }}
                 />
                 <Box sx={{ flexGrow: 1 }}>
@@ -39,9 +45,11 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                         component="h1"
                         sx={{
                             fontWeight: 600,
-                            letterSpacing: "0.5px",
+                            letterSpacing: 0.5,
                             mb: 0.5,
+                            color: "primary.contrastText",
                         }}
+                        data-testid="app-title"
                     >
                         {title}
                     </Typography>
@@ -49,31 +57,38 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                         variant="caption"
                         component="p"
                         sx={{
-                            display: "block",
+                            color: "primary.contrastText",
+                            opacity: 0.8,
+                            fontSize: "0.75rem",
                             lineHeight: 1.2,
-                            opacity: 0.9,
-                            maxWidth: "600px",
-                            fontSize: "0.8rem",
-                            mr: 2,
-                            "@media (min-width: 600px)": {
-                                fontSize: "0.875rem",
-                            },
+                            display: { xs: "none", sm: "block" },
                         }}
                     >
                         {subtitle}
                     </Typography>
                 </Box>
-                <Box sx={{ flexGrow: 1 }} />
-                <Tooltip title={`Toggle ${darkMode ? "Light" : "Dark"} Mode`}>
-                    <IconButton color="inherit" onClick={onToggleDarkMode} aria-label="toggle dark mode">
-                        {darkMode ? <Brightness7 /> : <Brightness4 />}
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Settings">
-                    <IconButton color="inherit" onClick={() => setSettingsOpen(true)} aria-label="settings">
-                        <Settings />
-                    </IconButton>
-                </Tooltip>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Tooltip title={darkMode ? "Light mode" : "Dark mode"}>
+                        <IconButton
+                            color="inherit"
+                            onClick={onToggleDarkMode}
+                            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                            size="large"
+                        >
+                            {darkMode ? <Brightness7 /> : <Brightness4 />}
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Settings">
+                        <IconButton
+                            color="inherit"
+                            onClick={() => setSettingsOpen(true)}
+                            aria-label="Open settings"
+                            size="large"
+                        >
+                            <Settings />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
             </Toolbar>
             <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
         </AppBar>

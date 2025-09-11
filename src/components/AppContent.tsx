@@ -1,10 +1,8 @@
+import { Box, useTheme } from "@mui/material";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-
-dayjs.extend(isSameOrAfter);
-dayjs.extend(isSameOrBefore);
 import { useState } from "react";
 import { useTransactionCalculations } from "../hooks/useTransactionCalculations";
 import { useTransactionEdit } from "../hooks/useTransactionEdit";
@@ -15,6 +13,10 @@ import { DateSearchBar } from "./DateSearchBar";
 import { SummaryCards } from "./SummaryCards";
 import TransactionFormDialog from "./TransactionFormDialog";
 import { TransactionList } from "./TransactionList";
+import type { AppTheme } from "../theme";
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
 
 interface DateRange {
     start: Dayjs | null;
@@ -77,10 +79,17 @@ const AppContent = () => {
         setIsAddDialogOpen(false);
     };
 
-    return (
-        <>
-            <SummaryCards totalEarnings={totalEarnings} totalSpendings={totalSpendings} balance={balance} />
+    const theme = useTheme() as AppTheme;
 
+    return (
+        <Box
+            sx={{
+                pt: `calc(${theme.custom.header.height}px + ${theme.spacing(3)})`,
+                px: 3,
+                pb: 3,
+            }}
+        >
+            <SummaryCards totalEarnings={totalEarnings} totalSpendings={totalSpendings} balance={balance} />
             <DateSearchBar dateRange={dateRange} onDateChange={setDateRange} />
 
             <TransactionList
@@ -125,7 +134,7 @@ const AppContent = () => {
                 onSubmit={handleAddTransaction}
                 isEditing={false}
             />
-        </>
+        </Box>
     );
 };
 
