@@ -79,12 +79,10 @@ const AppContent = () => {
         setIsAddDialogOpen(false);
     };
 
-    const theme = useTheme() as AppTheme;
-
     return (
         <Box
             sx={{
-                pt: `calc(${theme.custom.header.height}px + ${theme.spacing(3)})`,
+                pt: 6,
                 px: 3,
                 pb: 3,
             }}
