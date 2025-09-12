@@ -82,7 +82,7 @@ const AppContent = () => {
         <Box
             sx={{
                 pt: 6,
-                px: 3,
+                px: 1,
                 pb: 3,
             }}
         >
