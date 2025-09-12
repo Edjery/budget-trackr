@@ -37,7 +37,7 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
             <CardContent sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column" }}>
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="subtitle1" color="text.secondary">
-                        {new Date(date).toLocaleDateString(getLocaleByLanguage(settings?.language) || "en-US", {
+                        {new Date(date).toLocaleDateString(getLocaleByLanguage(settings?.language), {
                             weekday: "long",
                             year: "numeric",
                             month: "long",

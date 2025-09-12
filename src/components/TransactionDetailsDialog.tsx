@@ -154,15 +154,12 @@ export const TransactionDetailsDialog = ({
                 </Box>
 
                 <Typography color="textPrimary" fontWeight="bold" gutterBottom>
-                    {new Date(selectedTransaction.date).toLocaleDateString(
-                        getLocaleByLanguage(settings?.language) || "en-PH",
-                        {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                            weekday: "long",
-                        }
-                    )}
+                    {new Date(selectedTransaction.date).toLocaleDateString(getLocaleByLanguage(settings?.language), {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        weekday: "long",
+                    })}
                 </Typography>
             </DialogTitle>
             <DialogContent>

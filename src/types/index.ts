@@ -4,6 +4,7 @@ export interface Language {
   code: string;
   name: string;
   nativeName: string;
+  locale: string;
 }
 
 export interface TransactionItem {
