@@ -77,6 +77,7 @@ export const TransactionList = ({
                                     flexDirection: "column",
                                     justifyContent: "center",
                                     alignItems: "center",
+                                    textAlign: "center",
                                     cursor: "pointer",
                                     bgcolor: "action.hover",
                                     "&:hover": {
@@ -84,6 +85,7 @@ export const TransactionList = ({
                                         boxShadow: 3,
                                     },
                                     transition: "all 0.2s ease-in-out",
+                                    padding: 2,
                                 }}
                             >
                                 <AddIcon fontSize="large" color="action" sx={{ fontSize: 48, mb: 1 }} />
