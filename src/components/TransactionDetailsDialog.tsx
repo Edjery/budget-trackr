@@ -191,7 +191,7 @@ export const TransactionDetailsDialog = ({
                     },
                 }}
             >
-                <Box mb={3}>
+                <Box>
                     <TableContainer component={Paper} variant="outlined">
                         <Table size="small">
                             <TableHead>
@@ -246,17 +246,28 @@ export const TransactionDetailsDialog = ({
                 <Box display="flex" gap={2} width="100%" justifyContent="space-between">
                     <Box display="flex" gap={1}>
                         {onAddTransaction && (
-                            <Button
+                            <IconButton
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     onAddTransaction(selectedTransaction.date);
                                 }}
                                 color="primary"
-                                variant="contained"
-                                startIcon={<AddIcon />}
+                                sx={{
+                                    borderRadius: 1,
+                                    width: 40,
+                                    height: 40,
+                                    bgcolor: "primary.main",
+                                    color: "primary.contrastText",
+                                    "&:hover": {
+                                        bgcolor: "primary.dark",
+                                        transform: "scale(1.05)",
+                                    },
+                                    transition: "all 0.2s ease-in-out",
+                                }}
+                                title={t("transaction.add")}
                             >
-                                {t("transaction.add")}
-                            </Button>
+                                <AddIcon />
+                            </IconButton>
                         )}
                         {onDelete && selectedDateTransactions.length > 0 && (
                             <Button
@@ -269,7 +280,9 @@ export const TransactionDetailsDialog = ({
                             </Button>
                         )}
                     </Box>
-                    <Button onClick={onClose}>{t("common.actions.close")}</Button>
+                    <Button variant="outlined" onClick={onClose}>
+                        {t("common.actions.close")}
+                    </Button>
                 </Box>
             </DialogActions>
 
