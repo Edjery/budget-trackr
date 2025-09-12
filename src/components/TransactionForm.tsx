@@ -60,8 +60,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
         [t]
     );
 
-    console.log("months", months);
-
     const getDaysInMonth = useCallback((year: number, month: number) => {
         return new Date(year, month, 0).getDate();
     }, []);

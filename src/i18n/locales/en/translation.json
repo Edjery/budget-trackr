@@ -20,6 +20,9 @@
       "title": "Language",
       "selectLanguage": "Select Language"
     },
+    "applyNow": "Apply Now",
+    "applyConfirmTitle": "Apply Changes",
+    "applyConfirmMessage": "Are you sure you want to apply these settings?",
     "save": "Save",
     "cancel": "Cancel"
   },

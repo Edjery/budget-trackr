@@ -21,8 +21,6 @@ const fetchTranslations = async (language: string): Promise<TranslationData> => 
         // Import translations directly from the src/i18n/locales directory
         const translations = await import(`../i18n/locales/${language}/translation.json`);
 
-        console.log("translations", translations);
-        
         const instance = i18n.createInstance();
         await instance
             .use(initReactI18next)

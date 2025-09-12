@@ -45,7 +45,6 @@ export const useSettings = () => {
             // Get current settings to merge with new ones
             const currentSettings = queryClient.getQueryData<UserSettings>(SETTINGS_QUERY_KEY) || settings;
             const mergedSettings = { ...currentSettings, ...newSettings };
-            console.log("JSON.stringify(mergedSettings)",JSON.stringify(mergedSettings))
             // Save to localStorage
             try {
                 localStorage.setItem('userSettings', JSON.stringify(mergedSettings));

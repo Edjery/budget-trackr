@@ -1,21 +1,21 @@
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
     Box,
+    Button,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     MenuItem,
 } from "@mui/material";
-import { Formik, Form, type FormikHelpers } from "formik";
+import { Form, Formik, type FormikHelpers } from "formik";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
-import { useCallback, useEffect } from "react";
-import { CURRENCIES } from "../../utils/currencyUtils";
 import { useAppSettings } from "../../hooks/useAppSettings";
 import type { ThemeMode } from "../../types/userSettings";
+import { CURRENCIES } from "../../utils/currencyUtils";
 import { FormikSelect } from "../form/FormikSelect";
-import { useTranslation } from "react-i18next";
 
 interface SettingsFormValues {
     theme: ThemeMode;
@@ -31,13 +31,8 @@ interface SettingsDialogProps {
 export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
     const { t } = useTranslation();
     const { settings, updateSettings } = useAppSettings();
-
-    // Log current settings for debugging
-    useEffect(() => {
-        if (open) {
-            console.log("Current settings in dialog:", settings);
-        }
-    }, [open, settings]);
+    const [openApply, setOpenApply] = useState(false);
+    const [stayOpen, setStayOpen] = useState(false);
 
     const getInitialValues = useCallback(
         (): SettingsFormValues => ({
@@ -71,7 +66,13 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                 language: values.language,
             });
             setSubmitting(false);
-            onClose();
+
+            if (stayOpen) {
+                setStayOpen(false);
+            } else {
+                onClose();
+            }
+            setOpenApply(false);
         } catch (error) {
             console.error("Failed to save settings:", error);
             setSubmitting(false);
@@ -87,55 +88,93 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                 onSubmit={handleSubmit}
                 enableReinitialize
             >
-                {({ isSubmitting, dirty, resetForm }) => (
-                    <Form>
-                        <DialogTitle>Settings</DialogTitle>
-                        <DialogContent dividers>
-                            <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
-                                {/* Theme Settings */}
-                                <FormikSelect name="theme" label={t("settings.appearance.theme")} size="small">
-                                    <MenuItem value="system">{t("settings.appearance.system")}</MenuItem>
-                                    <MenuItem value="light">{t("settings.appearance.light")}</MenuItem>
-                                    <MenuItem value="dark">{t("settings.appearance.dark")}</MenuItem>
-                                </FormikSelect>
+                {({ values, setSubmitting, isSubmitting, dirty, resetForm }) => (
+                    <>
+                        <Form>
+                            <DialogTitle>Settings</DialogTitle>
+                            <DialogContent dividers>
+                                <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
+                                    {/* Theme Settings */}
+                                    <FormikSelect name="theme" label={t("settings.appearance.theme")} size="small">
+                                        <MenuItem value="system">{t("settings.appearance.system")}</MenuItem>
+                                        <MenuItem value="light">{t("settings.appearance.light")}</MenuItem>
+                                        <MenuItem value="dark">{t("settings.appearance.dark")}</MenuItem>
+                                    </FormikSelect>
 
-                                {/* Currency Settings */}
-                                <FormikSelect name="currency" label={t("settings.currency.title")} size="small">
-                                    {Object.values(CURRENCIES).map((curr) => (
-                                        <MenuItem key={curr.code} value={curr.code}>
-                                            {`${curr.name} (${curr.symbol})`}
-                                        </MenuItem>
-                                    ))}
-                                </FormikSelect>
+                                    {/* Currency Settings */}
+                                    <FormikSelect name="currency" label={t("settings.currency.title")} size="small">
+                                        {Object.values(CURRENCIES).map((curr) => (
+                                            <MenuItem key={curr.code} value={curr.code}>
+                                                {`${curr.name} (${curr.symbol})`}
+                                            </MenuItem>
+                                        ))}
+                                    </FormikSelect>
 
-                                {/* Language Settings */}
-                                <FormikSelect name="language" label={t("settings.language.title")} size="small">
-                                    <MenuItem value="en">{t("languages.en")}</MenuItem>
-                                    <MenuItem value="ph">{t("languages.ph")}</MenuItem>
-                                </FormikSelect>
-                            </Box>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button
-                                onClick={() => {
-                                    resetForm();
-                                    onClose();
-                                }}
-                                color="inherit"
-                            >
-                                {t("settings.cancel")}
-                            </Button>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                disabled={isSubmitting || !dirty}
-                                startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
-                            >
-                                {isSubmitting ? t("common.actions.saving") : t("settings.save")}
-                            </Button>
-                        </DialogActions>
-                    </Form>
+                                    {/* Language Settings */}
+                                    <FormikSelect name="language" label={t("settings.language.title")} size="small">
+                                        <MenuItem value="en">{t("languages.en")}</MenuItem>
+                                        <MenuItem value="ph">{t("languages.ph")}</MenuItem>
+                                    </FormikSelect>
+                                </Box>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button
+                                    onClick={() => {
+                                        resetForm();
+                                        onClose();
+                                    }}
+                                    color="inherit"
+                                >
+                                    {t("settings.cancel")}
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outlined"
+                                    color="primary"
+                                    disabled={isSubmitting || !dirty}
+                                    onClick={() => {
+                                        setStayOpen(true);
+                                        setOpenApply(true);
+                                    }}
+                                    sx={{ mr: 1 }}
+                                >
+                                    {t("settings.applyNow")}
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={isSubmitting || !dirty}
+                                    startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
+                                    onClick={() => {
+                                        setStayOpen(false);
+                                        setOpenApply(true);
+                                    }}
+                                >
+                                    {isSubmitting ? t("common.actions.saving") : t("settings.save")}
+                                </Button>
+                            </DialogActions>
+                        </Form>
+                        <Dialog open={openApply} onClose={() => setOpenApply(false)} maxWidth="xs" fullWidth>
+                            <DialogTitle>{t("settings.applyConfirmTitle")}</DialogTitle>
+                            <DialogContent>
+                                <p>{t("settings.applyConfirmMessage")}</p>
+                            </DialogContent>
+                            <DialogActions sx={{ p: 2, justifyContent: "flex-end" }}>
+                                <Button onClick={() => setOpenApply(false)} color="inherit">
+                                    {t("settings.cancel")}
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        handleSubmit(values, { setSubmitting } as FormikHelpers<SettingsFormValues>)
+                                    }
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    {stayOpen ? t("settings.applyNow") : t("settings.save")}
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+                    </>
                 )}
             </Formik>
         </Dialog>
