@@ -1,10 +1,12 @@
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Collapse } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import useSettings from "../hooks/useSettings";
 
 const DebugView = ({ data }: { data: any }) => {
+    const { settings } = useSettings();
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
 
@@ -37,6 +39,7 @@ const DebugView = ({ data }: { data: any }) => {
                         wordWrap: "break-word",
                     }}
                 >
+                    {JSON.stringify(settings, null, 2)}
                     {JSON.stringify(data, null, 2)}
                 </Box>
             </Collapse>
