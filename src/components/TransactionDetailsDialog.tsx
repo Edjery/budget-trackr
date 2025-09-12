@@ -162,7 +162,35 @@ export const TransactionDetailsDialog = ({
                     })}
                 </Typography>
             </DialogTitle>
-            <DialogContent>
+            <DialogContent
+                sx={{
+                    "&.MuiDialogContent-root": {
+                        "&::-webkit-scrollbar": {
+                            width: "6px",
+                            height: "6px",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                            background: (theme) => (theme.palette.mode === "light" ? "#f1f1f1" : "#424242"),
+                            borderRadius: "4px",
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                            background: (theme) => (theme.palette.mode === "light" ? "#888" : "#757575"),
+                            borderRadius: "4px",
+                            "&:hover": {
+                                background: (theme) => (theme.palette.mode === "light" ? "#555" : "#9e9e9e"),
+                            },
+                        },
+                        maxHeight: "60vh",
+                        overflowY: "auto",
+                        pr: 1,
+                        "&:hover": {
+                            "&::-webkit-scrollbar-thumb": {
+                                background: (theme) => (theme.palette.mode === "light" ? "#666" : "#9e9e9e"),
+                            },
+                        },
+                    },
+                }}
+            >
                 <Box mb={3}>
                     <TableContainer component={Paper} variant="outlined">
                         <Table size="small">
