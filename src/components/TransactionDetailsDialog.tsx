@@ -24,6 +24,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getLocaleByLanguage } from "../constants/languages";
 import { useSettings } from "../hooks/useSettings";
 import { useTransactionOrder } from "../hooks/useTransactionOrder";
 import type { Transaction } from "../types";
@@ -153,12 +154,15 @@ export const TransactionDetailsDialog = ({
                 </Box>
 
                 <Typography color="textPrimary" fontWeight="bold" gutterBottom>
-                    {new Date(selectedTransaction.date).toLocaleDateString(settings?.currency?.locale || "en-PH", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        weekday: "long",
-                    })}
+                    {new Date(selectedTransaction.date).toLocaleDateString(
+                        getLocaleByLanguage(settings?.language) || "en-PH",
+                        {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            weekday: "long",
+                        }
+                    )}
                 </Typography>
             </DialogTitle>
             <DialogContent>

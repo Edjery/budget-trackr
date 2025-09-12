@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { getLocaleByLanguage } from "../constants/languages";
 import useSettings from "../hooks/useSettings";
 import type { Transaction } from "../types";
 import { formatCurrency } from "../utils/currencyUtils";
@@ -11,14 +12,12 @@ interface TransactionCardProps {
 }
 
 export const TransactionCard = ({ date, transactions, onTransactionClick }: TransactionCardProps) => {
-    const { i18n, t } = useTranslation();
+    const { t } = useTranslation();
     const { settings } = useSettings();
     const total = transactions.reduce((sum, t) => {
         const amount = parseFloat(t.amount);
         return t.type === "earnings" ? sum + amount : sum - amount;
     }, 0);
-
-    console.log(settings?.currency?.locale, "settings?.currency?.local");
 
     return (
         <Card
@@ -38,7 +37,7 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
             <CardContent sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column" }}>
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="subtitle1" color="text.secondary">
-                        {new Date(date).toLocaleDateString(settings?.currency?.locale || "en-US", {
+                        {new Date(date).toLocaleDateString(getLocaleByLanguage(settings?.language) || "en-US", {
                             weekday: "long",
                             year: "numeric",
                             month: "long",
