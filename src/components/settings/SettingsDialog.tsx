@@ -123,7 +123,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                                 }}
                                 color="inherit"
                             >
-                                Cancel
+                                {t("settings.cancel")}
                             </Button>
                             <Button
                                 type="submit"
@@ -132,7 +132,7 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                                 disabled={isSubmitting || !dirty}
                                 startIcon={isSubmitting ? <CircularProgress size={20} /> : null}
                             >
-                                {isSubmitting ? "Saving..." : "Save Changes"}
+                                {isSubmitting ? t("common.actions.saving") : t("settings.save")}
                             </Button>
                         </DialogActions>
                     </Form>
