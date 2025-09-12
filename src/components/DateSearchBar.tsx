@@ -35,7 +35,7 @@ export const DateSearchBar = ({ onDateChange, dateRange }: DateSearchBarProps) =
     );
 
     return (
-        <Card elevation={3} sx={{ mt: 4, p: 2 }}>
+        <Card elevation={3} sx={{ mt: 4, p: { xs: 1, sm: 2 } }}>
             <Box sx={{ p: 2, backgroundColor: "background.paper" }}>
                 <Stack direction={isMobile ? "column" : "row"} spacing={2}>
                     <Typography variant="h6" color="textSecondary" sx={{ display: "flex", alignItems: "center" }}>

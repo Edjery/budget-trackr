@@ -59,7 +59,7 @@ export const TransactionList = ({
 
     return (
         <>
-            <Card elevation={3} sx={{ mt: 4, p: 2 }}>
+            <Card elevation={3} sx={{ mt: 4, p: { xs: 1, sm: 2 } }}>
                 <CardContent>
                     <Typography variant="h6" gutterBottom>
                         {t("transaction.form.list.title")}

@@ -20,7 +20,7 @@ const SummaryCard = ({ title, value, icon, color, isVisible, isBalance, onToggle
 
     return (
         <Grid size={{ xs: 12, sm: 4 }}>
-            <Card elevation={3} sx={{ height: "100%" }}>
+            <Card elevation={3} sx={{ height: "100%", p: { xs: 1, sm: 2 } }}>
                 <CardContent>
                     <Box display="flex" alignItems="center" mb={2} justifyContent="space-between">
                         <Box display="flex" alignItems="center">
