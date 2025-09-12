@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next";
 import useSettings from "../hooks/useSettings";
 
 const DebugView = ({ data }: { data: any }) => {
+    const isDebug = import.meta.env.VITE_ENVIRONMENT == "dev";
+    if (!isDebug) return null;
+
     const { settings } = useSettings();
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
