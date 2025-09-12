@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSettings } from "../hooks/useSettings";
 import { useTransactionOrder } from "../hooks/useTransactionOrder";
 import type { Transaction } from "../types";
@@ -48,6 +49,7 @@ export const TransactionDetailsDialog = ({
     onAddTransaction,
     transactions,
 }: TransactionDetailsDialogProps) => {
+    const { t } = useTranslation();
     const { settings } = useSettings();
     const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
     const [showDeleteAllDialog, setShowDeleteAllDialog] = useState(false);
@@ -135,7 +137,7 @@ export const TransactionDetailsDialog = ({
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ m: 0, p: 2 }}>
                 <Box display="flex" justifyContent="space-between">
-                    Transaction Details
+                    {t("transaction.details")}
                     <IconButton
                         aria-label="close"
                         onClick={onClose}
@@ -151,7 +153,7 @@ export const TransactionDetailsDialog = ({
                 </Box>
 
                 <Typography color="textPrimary" fontWeight="bold" gutterBottom>
-                    {new Date(selectedTransaction.date).toLocaleDateString("en-PH", {
+                    {new Date(selectedTransaction.date).toLocaleDateString(settings?.currency?.locale || "en-PH", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
@@ -166,36 +168,34 @@ export const TransactionDetailsDialog = ({
                             <TableHead>
                                 <TableRow>
                                     <TableCell width={40}></TableCell>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell align="right">Amount</TableCell>
-                                    <TableCell>Type</TableCell>
-                                    <TableCell align="right">Actions</TableCell>
+                                    <TableCell>{t("transaction.name")}</TableCell>
+                                    <TableCell align="right">{t("transaction.amount")}</TableCell>
+                                    <TableCell>{t("transaction.type")}</TableCell>
+                                    <TableCell align="right">{t("common.actionsLabel")}</TableCell>
                                 </TableRow>
                             </TableHead>
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}
-                                autoScroll={false}
-                            >
-                                <TableBody>
-                                    <>
-                                        <SortableContext
-                                            items={sortedTransactions.map((tx) => tx.id)}
-                                            strategy={verticalListSortingStrategy}
-                                        >
-                                            {sortedTransactions.map((transaction) => (
-                                                <SortableTransactionRow
-                                                    key={transaction.id}
-                                                    transaction={transaction}
-                                                    onEdit={onEdit || (() => {})}
-                                                    onDelete={handleDeleteClick}
-                                                />
-                                            ))}
-                                        </SortableContext>
-                                    </>
-                                </TableBody>
-                            </DndContext>
+                            <TableBody>
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragEnd={handleDragEnd}
+                                    autoScroll={false}
+                                >
+                                    <SortableContext
+                                        items={sortedTransactions.map((tx) => tx.id)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
+                                        {sortedTransactions.map((transaction) => (
+                                            <SortableTransactionRow
+                                                key={transaction.id}
+                                                transaction={transaction}
+                                                onEdit={onEdit || (() => {})}
+                                                onDelete={handleDeleteClick}
+                                            />
+                                        ))}
+                                    </SortableContext>
+                                </DndContext>
+                            </TableBody>
                         </Table>
                     </TableContainer>
                 </Box>
@@ -203,7 +203,7 @@ export const TransactionDetailsDialog = ({
             <DialogActions sx={{ p: 2, flexDirection: "column", gap: 2, alignItems: "flex-start" }}>
                 <Box width="100%" display="flex" justifyContent="space-between" alignItems="center">
                     <Typography fontWeight="bold" my={2}>
-                        Total for this day:{" "}
+                        {t("transaction.totalForDay")}:{" "}
                         {(() => {
                             const total = selectedDateTransactions.reduce((sum, t) => {
                                 const amount = parseFloat(t.amount) || 0;
@@ -226,7 +226,7 @@ export const TransactionDetailsDialog = ({
                                 variant="contained"
                                 startIcon={<AddIcon />}
                             >
-                                Add
+                                {t("transaction.add")}
                             </Button>
                         )}
                         {onDelete && selectedDateTransactions.length > 0 && (
@@ -236,11 +236,11 @@ export const TransactionDetailsDialog = ({
                                 variant="contained"
                                 startIcon={<DeleteIcon />}
                             >
-                                Delete All
+                                {t("transaction.deleteAll")}
                             </Button>
                         )}
                     </Box>
-                    <Button onClick={onClose}>Close</Button>
+                    <Button onClick={onClose}>{t("common.actions.close")}</Button>
                 </Box>
             </DialogActions>
 
@@ -249,20 +249,18 @@ export const TransactionDetailsDialog = ({
                 <DialogTitle>
                     <Box display="flex" alignItems="center" gap={1}>
                         <WarningAmberIcon color="warning" />
-                        <span>Delete Transaction</span>
+                        <span>{t("transaction.deleteTitle")}</span>
                     </Box>
                 </DialogTitle>
                 <DialogContent>
-                    <Typography>
-                        Are you sure you want to delete this transaction? This action cannot be undone.
-                    </Typography>
+                    <Typography>{t("transaction.deleteConfirmation")}</Typography>
                 </DialogContent>
                 <DialogActions sx={{ p: 2, justifyContent: "flex-end" }}>
                     <Button onClick={handleCancelDelete} color="inherit">
-                        Cancel
+                        {t("common.actions.cancel")}
                     </Button>
                     <Button onClick={handleConfirmDelete} color="error" variant="contained" startIcon={<DeleteIcon />}>
-                        Delete
+                        {t("common.actions.delete")}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -272,18 +270,17 @@ export const TransactionDetailsDialog = ({
                 <DialogTitle>
                     <Box display="flex" alignItems="center" gap={1}>
                         <WarningAmberIcon color="error" />
-                        <span>Delete All Transactions</span>
+                        <span>{t("transaction.deleteAllTitle")}</span>
                     </Box>
                 </DialogTitle>
                 <DialogContent>
                     <Typography>
-                        Are you sure you want to delete all {selectedDateTransactions.length} transactions for this
-                        date? This action cannot be undone.
+                        {t("transaction.deleteAllConfirmation", { count: selectedDateTransactions.length })}
                     </Typography>
                 </DialogContent>
                 <DialogActions sx={{ p: 2, justifyContent: "flex-end" }}>
                     <Button onClick={handleCancelDelete} color="inherit">
-                        Cancel
+                        {t("common.actions.cancel")}
                     </Button>
                     <Button
                         onClick={handleConfirmDeleteAll}
@@ -291,7 +288,7 @@ export const TransactionDetailsDialog = ({
                         variant="contained"
                         startIcon={<DeleteIcon />}
                     >
-                        Delete All
+                        {t("transaction.deleteAll")}
                     </Button>
                 </DialogActions>
             </Dialog>

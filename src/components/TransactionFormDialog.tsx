@@ -1,6 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import { Form, Formik } from "formik";
+import { useTranslation } from "react-i18next";
 import { useTransactionForm } from "../hooks/useTransactionForm";
 import useTransactionSubmission from "../hooks/useTransactionSubmission";
 import { type FormValues, validationSchema } from "../types";
@@ -21,6 +22,7 @@ const TransactionFormDialog = ({
     onSubmit: propOnSubmit,
     isEditing = false,
 }: TransactionFormDialogProps) => {
+    const { t } = useTranslation();
     const { getInitialValues, createEmptyTransactionItem, resetFormValues } = useTransactionForm();
     const { submitTransaction, isSubmitting } = useTransactionSubmission();
     const initialValues = propInitialValues || getInitialValues();
@@ -44,7 +46,7 @@ const TransactionFormDialog = ({
     return (
         <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ m: 0, p: 2 }}>
-                {isEditing ? "Edit Transaction" : "Add New Transaction"}
+                {isEditing ? t("transaction.form.dialogTitles.edit") : t("transaction.form.dialogTitles.add")}
                 <IconButton
                     aria-label="close"
                     onClick={handleCloseDialog}

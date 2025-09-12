@@ -3,6 +3,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Card, CardContent, Collapse, Grid, Typography } from "@mui/material";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { Transaction } from "../types";
 import { TransactionCard } from "./TransactionCard";
 import TransactionDetailsDialog from "./TransactionDetailsDialog";
@@ -21,6 +22,7 @@ export const TransactionList = ({
     onDeleteTransaction,
     onAddTransaction,
 }: TransactionListProps) => {
+    const { t } = useTranslation();
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -61,7 +63,7 @@ export const TransactionList = ({
             <Card elevation={3} sx={{ mt: 4, p: 2 }}>
                 <CardContent>
                     <Typography variant="h6" gutterBottom>
-                        Recent Transactions
+                        {t("transaction.form.list.title")}
                     </Typography>
 
                     <Grid container spacing={2}>
@@ -87,7 +89,7 @@ export const TransactionList = ({
                             >
                                 <AddIcon fontSize="large" color="action" sx={{ fontSize: 48, mb: 1 }} />
                                 <Typography variant="h6" color="text.secondary">
-                                    Add New Transaction
+                                    {t("transaction.form.list.addButton")}
                                 </Typography>
                             </Card>
                         </Grid>
@@ -108,7 +110,7 @@ export const TransactionList = ({
                     {hasMore && (
                         <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                             <Button variant="outlined" onClick={loadMore} sx={{ mt: 2 }}>
-                                Load More
+                                {t("transaction.form.list.loadMore")}
                             </Button>
                         </Box>
                     )}
@@ -131,6 +133,7 @@ export const TransactionList = ({
 };
 
 const DebugView = ({ data }: { data: any }) => {
+    const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
 
     return (
@@ -143,7 +146,7 @@ const DebugView = ({ data }: { data: any }) => {
                 variant="outlined"
                 sx={{ mb: 1 }}
             >
-                {expanded ? "Hide Debug Data" : "Show Debug Data"}
+                {expanded ? t("transaction.form.list.debug.hide") : t("transaction.form.list.debug.show")}
             </Button>
             <Collapse in={expanded}>
                 <Box

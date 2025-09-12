@@ -13,7 +13,24 @@ import {
 import Grid from "@mui/material/Grid";
 import { FieldArray, useFormikContext } from "formik";
 import { memo, useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import type { FormValues, TransactionItem } from "../types";
+
+// Month names for localization
+const MONTHS = [
+    { value: 1, key: "january" },
+    { value: 2, key: "february" },
+    { value: 3, key: "march" },
+    { value: 4, key: "april" },
+    { value: 5, key: "may" },
+    { value: 6, key: "june" },
+    { value: 7, key: "july" },
+    { value: 8, key: "august" },
+    { value: 9, key: "september" },
+    { value: 10, key: "october" },
+    { value: 11, key: "november" },
+    { value: 12, key: "december" },
+];
 
 interface TransactionFormProps {
     isSubmitting: boolean;
@@ -29,8 +46,21 @@ interface CustomSelectChangeEvent {
 }
 
 export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }) => {
+    const { t } = useTranslation();
     const { values, errors, touched, handleChange, handleBlur, setFieldValue } = useFormikContext<FormValues>();
     const currentYear = new Date().getFullYear();
+
+    // Localized month names
+    const months = useMemo(
+        () =>
+            MONTHS.map((month) => ({
+                value: month.value,
+                label: t(`common.months.${month.key}`),
+            })),
+        [t]
+    );
+
+    console.log("months", months);
 
     const getDaysInMonth = useCallback((year: number, month: number) => {
         return new Date(year, month, 0).getDate();
@@ -42,21 +72,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
     );
 
     const days = useMemo(() => Array.from({ length: daysInMonth }, (_, i) => i + 1), [daysInMonth]);
-
-    const months = [
-        { value: 1, label: "January" },
-        { value: 2, label: "February" },
-        { value: 3, label: "March" },
-        { value: 4, label: "April" },
-        { value: 5, label: "May" },
-        { value: 6, label: "June" },
-        { value: 7, label: "July" },
-        { value: 8, label: "August" },
-        { value: 9, label: "September" },
-        { value: 10, label: "October" },
-        { value: 11, label: "November" },
-        { value: 12, label: "December" },
-    ];
 
     // Update endDay if it's greater than days in month when month or year changes
     useEffect(() => {
@@ -95,13 +110,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
         }
     };
 
-    // Update endDay if it's greater than days in month when month or year changes
-    useEffect(() => {
-        if (values.endDay > daysInMonth) {
-            setFieldValue("endDay", daysInMonth);
-        }
-    }, [values.month, values.year, daysInMonth, setFieldValue, values.endDay]);
-
     // Sort items by sortOrder
     const sortedItems = [...values.items].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
@@ -130,18 +138,18 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
             {/* Date Selection Section */}
             <Box sx={{ mb: 4, p: 3, border: "1px solid", borderColor: "divider", borderRadius: 1 }}>
                 <Typography variant="h6" gutterBottom>
-                    Date Selection
+                    {t("transaction.form.dateSection")}
                 </Typography>
                 <Grid container spacing={3}>
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={{ width: "100%" }}>
                         <FormControl fullWidth error={Boolean(touched?.year && errors?.year)}>
-                            <InputLabel>Year</InputLabel>
+                            <InputLabel>{t("transaction.year")}</InputLabel>
                             <Select
                                 name="year"
                                 value={values.year}
                                 onChange={handleYearChange}
                                 onBlur={handleBlur}
-                                label="Year"
+                                label={t("transaction.year")}
                             >
                                 {Array.from({ length: 11 }, (_, i) => currentYear - 5 + i).map((year) => (
                                     <MenuItem key={year} value={year}>
@@ -155,13 +163,13 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
 
                     <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                         <FormControl fullWidth error={Boolean(touched.month && errors.month)}>
-                            <InputLabel>Month</InputLabel>
+                            <InputLabel>{t("transaction.month")}</InputLabel>
                             <Select
                                 name="month"
                                 value={values.month}
                                 onChange={handleMonthChange}
                                 onBlur={handleBlur}
-                                label="Month"
+                                label={t("transaction.month")}
                             >
                                 {months.map((month) => (
                                     <MenuItem key={month.value} value={month.value}>
@@ -173,18 +181,18 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                         </FormControl>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} sx={{ width: "100%" }}>
                         <FormControl fullWidth error={Boolean(touched.dayRangeType && errors.dayRangeType)}>
-                            <InputLabel>Day Range Type</InputLabel>
+                            <InputLabel>{t("transaction.day")}</InputLabel>
                             <Select
                                 name="dayRangeType"
                                 value={values.dayRangeType}
                                 onChange={handleDayRangeTypeChange}
                                 onBlur={handleBlur}
-                                label="Day Range Type"
+                                label={t("transaction.day")}
                             >
-                                <MenuItem value="single">Single Day</MenuItem>
-                                <MenuItem value="multiple">Multiple Days</MenuItem>
+                                <MenuItem value="single">{t("transaction.dayRange.single")}</MenuItem>
+                                <MenuItem value="multiple">{t("transaction.dayRange.multiple")}</MenuItem>
                             </Select>
                             {touched.dayRangeType && errors.dayRangeType && (
                                 <FormHelperText>{errors.dayRangeType}</FormHelperText>
@@ -192,15 +200,18 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                         </FormControl>
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 6, md: values.dayRangeType === "single" ? 12 : 6 }}>
+                    <Grid
+                        size={{ xs: 12, sm: 6, md: values.dayRangeType === "single" ? 12 : 6 }}
+                        sx={{ width: "100%" }}
+                    >
                         <FormControl fullWidth error={Boolean(touched.startDay && errors.startDay)}>
-                            <InputLabel>Start Day</InputLabel>
+                            <InputLabel>{t("transaction.startDay")}</InputLabel>
                             <Select
                                 name="startDay"
                                 value={values.startDay}
                                 onChange={handleStartDayChange}
                                 onBlur={handleBlur}
-                                label="Start Day"
+                                label={t("transaction.startDay")}
                             >
                                 {days.map((day) => (
                                     <MenuItem key={day} value={day}>
@@ -217,13 +228,13 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                     {values.dayRangeType === "multiple" && (
                         <Grid size={{ xs: 12, sm: 6, md: 6 }}>
                             <FormControl fullWidth error={Boolean(touched.endDay && errors.endDay)}>
-                                <InputLabel>End Day</InputLabel>
+                                <InputLabel>{t("transaction.endDay")}</InputLabel>
                                 <Select
                                     name="endDay"
                                     value={values.endDay}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
-                                    label="End Day"
+                                    label={t("transaction.endDay")}
                                     disabled={isSubmitting}
                                 >
                                     {days
@@ -270,7 +281,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                                             >
                                                 <TextField
                                                     name={`items.${index}.name`}
-                                                    label="Item Name"
+                                                    label={t("transaction.form.itemName")}
                                                     fullWidth
                                                     size="small"
                                                     value={item.name}
@@ -299,18 +310,18 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                                                         "type" in errors.items[index]!
                                                 )}
                                             >
-                                                <InputLabel>Type</InputLabel>
+                                                <InputLabel>{t("transaction.form.type")}</InputLabel>
                                                 <Select
                                                     name={`items.${index}.type`}
                                                     value={item.type}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
-                                                    label="Type"
+                                                    label={t("transaction.form.type")}
                                                     size="small"
                                                     disabled={isSubmitting}
                                                 >
-                                                    <MenuItem value="earnings">Earnings</MenuItem>
-                                                    <MenuItem value="spendings">Spendings</MenuItem>
+                                                    <MenuItem value="earnings">{t("transaction.earnings")}</MenuItem>
+                                                    <MenuItem value="spendings">{t("transaction.spendings")}</MenuItem>
                                                 </Select>
                                                 {touched.items?.[index]?.type &&
                                                     typeof errors.items?.[index] === "object" &&
@@ -335,7 +346,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                                             >
                                                 <TextField
                                                     name={`items.${index}.amount`}
-                                                    label="Amount"
+                                                    label={t("transaction.form.amount")}
                                                     type="number"
                                                     value={item.amount}
                                                     onChange={handleChange}
@@ -382,7 +393,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                                     onClick={handleAddItem}
                                     disabled={isSubmitting}
                                 >
-                                    Add Item
+                                    {t("transaction.form.addItem")}
                                 </Button>
                             </Grid>
                         </Box>
@@ -398,7 +409,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                         disabled={values.items.length === 0 || isSubmitting}
                         fullWidth
                     >
-                        Save Transaction{values.dayRangeType === "single" ? "" : "s"}
+                        {t(`transaction.form.saveButton.${values.items.length > 1 ? "multiple" : "single"}`)}
                     </Button>
                 </Box>
             </Box>

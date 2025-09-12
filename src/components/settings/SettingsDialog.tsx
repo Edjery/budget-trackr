@@ -15,6 +15,7 @@ import { CURRENCIES } from "../../utils/currencyUtils";
 import { useAppSettings } from "../../hooks/useAppSettings";
 import type { ThemeMode } from "../../types/userSettings";
 import { FormikSelect } from "../form/FormikSelect";
+import { useTranslation } from "react-i18next";
 
 interface SettingsFormValues {
     theme: ThemeMode;
@@ -28,6 +29,7 @@ interface SettingsDialogProps {
 }
 
 export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
+    const { t } = useTranslation();
     const { settings, updateSettings } = useAppSettings();
 
     // Log current settings for debugging
@@ -91,14 +93,14 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                         <DialogContent dividers>
                             <Box sx={{ display: "flex", flexDirection: "column", gap: 3, pt: 1 }}>
                                 {/* Theme Settings */}
-                                <FormikSelect name="theme" label="Theme" size="small">
-                                    <MenuItem value="system">System Default</MenuItem>
-                                    <MenuItem value="light">Light</MenuItem>
-                                    <MenuItem value="dark">Dark</MenuItem>
+                                <FormikSelect name="theme" label={t("settings.appearance.theme")} size="small">
+                                    <MenuItem value="system">{t("settings.appearance.system")}</MenuItem>
+                                    <MenuItem value="light">{t("settings.appearance.light")}</MenuItem>
+                                    <MenuItem value="dark">{t("settings.appearance.dark")}</MenuItem>
                                 </FormikSelect>
 
                                 {/* Currency Settings */}
-                                <FormikSelect name="currency" label="Currency" size="small">
+                                <FormikSelect name="currency" label={t("settings.currency.title")} size="small">
                                     {Object.values(CURRENCIES).map((curr) => (
                                         <MenuItem key={curr.code} value={curr.code}>
                                             {`${curr.name} (${curr.symbol})`}
@@ -107,9 +109,9 @@ export const SettingsDialog = ({ open, onClose }: SettingsDialogProps) => {
                                 </FormikSelect>
 
                                 {/* Language Settings */}
-                                <FormikSelect name="language" label="Language" size="small">
-                                    <MenuItem value="en">English</MenuItem>
-                                    <MenuItem value="ph">Filipino</MenuItem>
+                                <FormikSelect name="language" label={t("settings.language.title")} size="small">
+                                    <MenuItem value="en">{t("languages.en")}</MenuItem>
+                                    <MenuItem value="ph">{t("languages.ph")}</MenuItem>
                                 </FormikSelect>
                             </Box>
                         </DialogContent>

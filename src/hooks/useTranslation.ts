@@ -17,28 +17,44 @@ interface TranslationData {
 
 // Fetches the current translations
 const fetchTranslations = async (language: string): Promise<TranslationData> => {
-    // Create a minimal i18n instance for the translation function
-    const instance = i18n.createInstance();
-    await instance
-        .use(initReactI18next)
-        .init({
-            lng: language,
-            fallbackLng: 'en',
-            interpolation: {
-                escapeValue: false,
-            },
-            resources: {
-                [language]: {
-                    translation: {}
+    try {
+        // Import translations directly from the src/i18n/locales directory
+        const translations = await import(`../i18n/locales/${language}/translation.json`);
+
+        console.log("translations", translations);
+        
+        const instance = i18n.createInstance();
+        await instance
+            .use(initReactI18next)
+            .init({
+                lng: language,
+                fallbackLng: 'en',
+                interpolation: {
+                    escapeValue: false,
+                },
+                resources: {
+                    [language]: {
+                        translation: translations.default || translations
+                    },
+                    // Preload English as fallback
+                    en: language !== 'en' ? await import('../i18n/locales/en/translation.json') : {}
                 }
-            }
-        });
-    
-    return {
-        t: instance.t,
-        currentLanguage: language,
-        isInitialized: true
-    };
+            });
+        
+        return {
+            t: instance.t,
+            currentLanguage: language,
+            isInitialized: true
+        };
+    } catch (error) {
+        console.error('Error loading translations:', error);
+        // Fallback to default i18n instance
+        return {
+            t: i18n.t,
+            currentLanguage: language,
+            isInitialized: false
+        };
+    }
 };
 
 export const useAppTranslation = () => {

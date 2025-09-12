@@ -1,8 +1,13 @@
 import { AccountBalanceWallet, Settings, Brightness4, Brightness7 } from "@mui/icons-material";
 import { AppBar, Box, Toolbar, Typography, IconButton, Tooltip, useTheme } from "@mui/material";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SettingsDialog } from "./settings/SettingsDialog";
 import type { AppTheme } from "../theme";
+
+// Default props as constants
+export const DEFAULT_HEADER_TITLE = "Budgeting Budgeteer";
+export const DEFAULT_HEADER_SUBTITLE = "app.subtitle";
 
 interface AppHeaderProps {
     title?: string;
@@ -12,11 +17,12 @@ interface AppHeaderProps {
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
-    title = "Budgeting Budgeteer",
-    subtitle = "Track and estimate monthly earnings and spendings for your budget needs",
+    title = DEFAULT_HEADER_TITLE,
+    subtitle = DEFAULT_HEADER_SUBTITLE,
     darkMode,
     onToggleDarkMode,
 }) => {
+    const { t } = useTranslation();
     const [settingsOpen, setSettingsOpen] = useState(false);
     const theme = useTheme() as AppTheme;
 
@@ -42,7 +48,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 <Box sx={{ flexGrow: 1 }}>
                     <Typography
                         variant="h6"
-                        component="h1"
+                        noWrap
+                        component="div"
                         sx={{
                             fontWeight: 600,
                             letterSpacing: 0.5,
@@ -55,7 +62,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                     </Typography>
                     <Typography
                         variant="caption"
-                        component="p"
+                        noWrap
+                        component="div"
                         sx={{
                             color: "primary.contrastText",
                             opacity: 0.8,
@@ -64,15 +72,19 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                             display: { xs: "none", sm: "block" },
                         }}
                     >
-                        {subtitle}
+                        {t(subtitle)}
                     </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    <Tooltip title={darkMode ? "Light mode" : "Dark mode"}>
+                    <Tooltip title={darkMode ? t("settings.appearance.light") : t("settings.appearance.dark")}>
                         <IconButton
                             color="inherit"
                             onClick={onToggleDarkMode}
-                            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                            aria-label={
+                                darkMode
+                                    ? t("settings.appearance.switchToLight")
+                                    : t("settings.appearance.switchToDark")
+                            }
                             size="large"
                         >
                             {darkMode ? <Brightness7 /> : <Brightness4 />}

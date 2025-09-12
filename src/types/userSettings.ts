@@ -37,7 +37,7 @@ export const DEFAULT_USER_SETTINGS: UserSettings = {
         code: 'PHP',
         symbol: '₱',
         name: 'Philippine Peso',
-        locale: 'en-PH'
+        locale: 'fil-PH'
     },
     notifications: {
         email: false,

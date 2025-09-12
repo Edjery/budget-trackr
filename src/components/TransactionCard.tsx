@@ -1,7 +1,8 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import useSettings from "../hooks/useSettings";
 import type { Transaction } from "../types";
 import { formatCurrency } from "../utils/currencyUtils";
-import useSettings from "../hooks/useSettings";
 
 interface TransactionCardProps {
     date: string;
@@ -10,11 +11,14 @@ interface TransactionCardProps {
 }
 
 export const TransactionCard = ({ date, transactions, onTransactionClick }: TransactionCardProps) => {
+    const { i18n, t } = useTranslation();
     const { settings } = useSettings();
     const total = transactions.reduce((sum, t) => {
         const amount = parseFloat(t.amount);
         return t.type === "earnings" ? sum + amount : sum - amount;
     }, 0);
+
+    console.log(settings?.currency?.locale, "settings?.currency?.local");
 
     return (
         <Card
@@ -34,7 +38,7 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
             <CardContent sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column" }}>
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="subtitle1" color="text.secondary">
-                        {new Date(date).toLocaleDateString("en-US", {
+                        {new Date(date).toLocaleDateString(settings?.currency?.locale || "en-US", {
                             weekday: "long",
                             year: "numeric",
                             month: "long",
@@ -64,7 +68,7 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
                         ))}
                     {transactions.length > 3 && (
                         <Typography variant="caption" color="text.secondary">
-                            +{transactions.length - 3} more...
+                            {t("common.more", { count: transactions.length - 3 })}
                         </Typography>
                     )}
                 </Box>
@@ -80,7 +84,7 @@ export const TransactionCard = ({ date, transactions, onTransactionClick }: Tran
                         alignItems: "center",
                     }}
                 >
-                    <Typography variant="subtitle2">Total:</Typography>
+                    <Typography variant="subtitle2">{t("common.total")}:</Typography>
                     <Typography
                         variant="subtitle1"
                         color={total >= 0 ? "success.main" : "error.main"}

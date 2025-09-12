@@ -3,6 +3,7 @@ import { Box, Card, CardContent, Grid, Typography, IconButton, Tooltip } from "@
 import type { SummaryCardsProps } from "../types";
 import { formatCurrency } from "../utils/currencyUtils";
 import { useSettings } from "../hooks/useSettings";
+import { useTranslation } from "react-i18next";
 
 interface SummaryCardProps {
     title: string;
@@ -61,6 +62,7 @@ const SummaryCard = ({ title, value, icon, color, isVisible, isBalance, onToggle
 };
 
 export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: SummaryCardsProps) => {
+    const { t } = useTranslation();
     const { settings, updateSettings } = useSettings();
 
     const handleToggleVisibility = (card: "balance" | "earnings" | "spendings") => {
@@ -77,7 +79,7 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
     return (
         <Grid container spacing={3} sx={{ my: 4 }}>
             <SummaryCard
-                title="Balance"
+                title={t("summary.balance")}
                 value={balance}
                 icon={<AccountBalance color="success" />}
                 color="success"
@@ -86,7 +88,7 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
                 isBalance
             />
             <SummaryCard
-                title="Total Earnings"
+                title={t("summary.earnings")}
                 value={totalEarnings}
                 icon={<AttachMoney color="primary" />}
                 color="primary"
@@ -94,7 +96,7 @@ export const SummaryCards = ({ totalEarnings, totalSpendings, balance }: Summary
                 onToggleVisibility={() => handleToggleVisibility("earnings")}
             />
             <SummaryCard
-                title="Total Spendings"
+                title={t("summary.expenses")}
                 value={totalSpendings}
                 icon={<MoneyOff color="error" />}
                 color="error"

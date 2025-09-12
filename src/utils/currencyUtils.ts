@@ -9,7 +9,7 @@ export const CURRENCIES: Record<string, Currency> = {
     PHP: {
         symbol: '₱',
         code: 'PHP',
-        locale: 'en-PH',
+        locale: 'fil-PH',
         name: 'Philippine Peso'
     },
     USD: {
@@ -150,4 +150,8 @@ export const getAvailableCurrencies = (): Currency[] => {
  */
 export const getCurrentCurrency = (): Currency => {
     return CURRENCY;
+};
+
+export const getCurrentLocale = (): string => {
+    return CURRENCY.locale;
 };

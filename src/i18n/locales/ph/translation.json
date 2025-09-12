@@ -3,14 +3,14 @@
     "title": "Mga Setting",
     "appearance": {
       "title": "Itsura",
-      "theme": {
-        "label": "Tema",
-        "light": "Maliwanag",
-        "dark": "Madilim",
-        "system": "Awtomatiko"
-      },
+      "theme": "Tema",
+      "light": "Maliwanag",
+      "dark": "Madilim",
+      "system": "Awtomatiko",
       "fontSize": "Laki ng Letra",
-      "compactMode": "Kompaktong Ayos"
+      "compactMode": "Kompaktong Ayos",
+      "switchToLight": "Lumipat sa liwanag na tema",
+      "switchToDark": "Lumipat sa madilim na tema"
     },
     "currency": {
       "title": "Salapi",
@@ -28,8 +28,107 @@
     "earnings": "Kabuuang Kita",
     "expenses": "Kabuuang Gastos"
   },
+  "dateRange": {
+    "selectDateRange": "Pumili ng Petsa",
+    "from": "Mula",
+    "to": "Hanggang",
+    "earliest": "Pinakamaaga",
+    "latest": "Pinakabago"
+  },
   "common": {
-    "required": "Kinakailangan ang patlang na ito"
+    "more": "{{count}} pa...",
+    "total": "Total",
+    "required": "Kinakailangan ang patlang na ito",
+    "months": {
+      "january": "Enero",
+      "february": "Pebrero",
+      "march": "Marso",
+      "april": "Abril",
+      "may": "Mayo",
+      "june": "Hunyo",
+      "july": "Hulyo",
+      "august": "Agosto",
+      "september": "Setyembre",
+      "october": "Oktubre",
+      "november": "Nobyembre",
+      "december": "Disyembre"
+    },
+    "actionsLabel": "Action",
+    "actions": {
+      "add": "Magdagdag",
+      "remove": "Alisin",
+      "save": "I-save",
+      "cancel": "Kanselahin",
+      "edit": "I-edit",
+      "delete": "Burahin",
+      "close": "Close"
+    }
+  },
+  "transaction": {
+    "details": "Mga Detalye ng Transaksyon",
+    "title": "Transaksyon",
+    "dateSelection": "Pagpili ng Petsa",
+    "year": "Taon",
+    "month": "Buwan",
+    "day": "Araw",
+    "dayRange": {
+      "single": "Isang Araw",
+      "multiple": "Maraming Araw"
+    },
+    "startDay": "Simulang Araw",
+    "endDay": "Wakas na Araw",
+    "type": "Uri",
+    "name": "Pangalan",
+    "itemName": "Pangalan ng Item",
+    "amount": "Halaga",
+    "description": "Paglalarawan",
+    "addItem": "Magdagdag ng Item",
+    "add": "Magdagdag ng Transaksyon",
+    "earnings": "Kita",
+    "spendings": "Gastos",
+    "form": {
+      "title": "Pormularyo ng Transaksyon",
+      "dateSection": "Pagpili ng Petsa",
+      "itemSection": "Mga Item ng Transaksyon",
+      "addItem": "Magdagdag ng Item",
+      "itemName": "Pangalan ng Item",
+      "type": "Uri",
+      "amount": "Halaga",
+      "removeItem": "Alisin ang Item",
+      "saveButton": {
+        "single": "I-save ang Transaksyon",
+        "multiple": "I-save ang mga Transaksyon"
+      },
+      "dialogTitles": {
+        "edit": "I-edit ang Transaksyon",
+        "add": "Magdagdag ng Bagong Transaksyon"
+      },
+      "list": {
+        "title": "Mga Kamakailang Transaksyon",
+        "addButton": "Magdagdag ng Bagong Transaksyon",
+        "loadMore": "Mag-load pa",
+        "debug": {
+          "show": "Ipakita ang Debug Data",
+          "hide": "Itago ang Debug Data"
+        }
+      }
+    },
+    "validation": {
+      "required": "Kinakailangan ang patlang na ito",
+      "invalidAmount": "Pakilagay ang wastong halaga",
+      "invalidDateRange": "Ang petsa ng wakas ay dapat na pagkatapos ng petsa ng simula"
+    },
+    "totalForDay": "Kabuuan para sa araw na ito",
+    "delete": "Burahin",
+    "deleteAll": "Burahin Lahat",
+    "deleteTitle": "Burahin ang Transaksyon",
+    "deleteAllTitle": "Burahin ang Lahat ng Transaksyon",
+    "deleteConfirmation": "Sigurado ka bang gusto mong burahin ang transaksyong ito? Ang aksyong ito ay hindi na mababawi.",
+    "deleteAllConfirmation": "Sigurado ka bang gusto mong burahin ang lahat ng {{count}} na transaksyon para sa petsang ito? Ang aksyong ito ay hindi na mababawi."
+  },
+  "app": {
+    "title": "Budgeting Budgeteer",
+    "subtitle": "Subaybayan at tantiyahin ang iyong buwanang kita at gastos para sa iyong pangangailangan sa badyet"
   },
   "languages": {
     "en": "Ingles",

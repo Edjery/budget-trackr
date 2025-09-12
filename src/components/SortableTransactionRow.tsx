@@ -5,6 +5,7 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import EditIcon from "@mui/icons-material/Edit";
 import { IconButton, TableCell, TableRow } from "@mui/material";
 import { useAppSettings } from "../hooks/useAppSettings";
+import { useTranslation } from "react-i18next";
 import type { Transaction } from "../types";
 import { formatCurrency } from "../utils/currencyUtils";
 
@@ -15,6 +16,7 @@ interface SortableTransactionRowProps {
 }
 
 export const SortableTransactionRow = ({ transaction, onEdit, onDelete }: SortableTransactionRowProps) => {
+    const { t } = useTranslation();
     const { settings } = useAppSettings();
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: transaction.id,
@@ -73,7 +75,6 @@ export const SortableTransactionRow = ({ transaction, onEdit, onDelete }: Sortab
                     },
                     // Increase touch target size for better mobile experience
                     "&::before": {
-                        content: '""',
                         position: "absolute",
                         top: "-10px",
                         right: "-10px",
@@ -101,7 +102,7 @@ export const SortableTransactionRow = ({ transaction, onEdit, onDelete }: Sortab
             >
                 {formatCurrency(parseFloat(transaction.amount), settings?.currency.code)}
             </TableCell>
-            <TableCell sx={{ textTransform: "capitalize" }}>{transaction.type}</TableCell>
+            <TableCell>{t(`transaction.${transaction.type}`)}</TableCell>
             <TableCell align="right">
                 <IconButton
                     size="small"
