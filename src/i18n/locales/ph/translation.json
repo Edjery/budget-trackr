@@ -36,7 +36,8 @@
     "from": "Mula",
     "to": "Hanggang",
     "earliest": "Pinakamaaga",
-    "latest": "Pinakabago"
+    "latest": "Pinakabago",
+    "clearButtonLabel": "I-clear"
   },
   "common": {
     "more": "{{count}} pa...",

@@ -36,7 +36,8 @@
     "from": "From",
     "to": "To",
     "earliest": "Earliest",
-    "latest": "Latest"
+    "latest": "Latest",
+    "clearButtonLabel": "Clear"
   },
   "common": {
     "more": "{{count}} more...",

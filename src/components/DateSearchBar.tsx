@@ -34,6 +34,8 @@ export const DateSearchBar = ({ onDateChange, dateRange }: DateSearchBarProps) =
         [dateRange, onDateChange]
     );
 
+    const clearButtonLabel = t("dateRange.clearButtonLabel");
+
     return (
         <Card elevation={3} sx={{ mt: 4, p: { xs: 1, sm: 2 } }}>
             <Box sx={{ p: 2, backgroundColor: "background.paper" }}>
@@ -54,6 +56,9 @@ export const DateSearchBar = ({ onDateChange, dateRange }: DateSearchBarProps) =
                                 actions: ["clear"],
                             },
                         }}
+                        localeText={{
+                            clearButtonLabel,
+                        }}
                     />
                     <DatePicker
                         label={`${t("dateRange.to")} ${end ? "" : t("dateRange.latest")}`}
@@ -69,6 +74,9 @@ export const DateSearchBar = ({ onDateChange, dateRange }: DateSearchBarProps) =
                             },
                         }}
                         minDate={start || undefined}
+                        localeText={{
+                            clearButtonLabel,
+                        }}
                     />
                 </Stack>
             </Box>
