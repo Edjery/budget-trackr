@@ -39,6 +39,10 @@
     "latest": "Pinakabago",
     "clearButtonLabel": "I-clear"
   },
+  "summaryCards": {
+    "hideCard": "Itago ang card",
+    "showCard": "Ipakita ang card"
+  },
   "common": {
     "more": "{{count}} pa...",
     "total": "Total",

@@ -16,6 +16,7 @@ interface SummaryCardProps {
 }
 
 const SummaryCard = ({ title, value, icon, color, isVisible, isBalance, onToggleVisibility }: SummaryCardProps) => {
+    const { t } = useTranslation();
     const { settings } = useSettings();
 
     return (
@@ -29,12 +30,12 @@ const SummaryCard = ({ title, value, icon, color, isVisible, isBalance, onToggle
                                 {title}
                             </Typography>
                         </Box>
-                        <Tooltip title={isVisible ? "Hide card" : "Show card"}>
+                        <Tooltip title={isVisible ? t("summaryCards.hideCard") : t("summaryCards.showCard")}>
                             <IconButton
                                 onClick={onToggleVisibility}
                                 size="small"
                                 color="inherit"
-                                aria-label={isVisible ? "Hide card" : "Show card"}
+                                aria-label={isVisible ? t("summaryCards.hideCard") : t("summaryCards.showCard")}
                             >
                                 {isVisible ? <Visibility fontSize="small" /> : <VisibilityOff fontSize="small" />}
                             </IconButton>
