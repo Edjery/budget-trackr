@@ -368,7 +368,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                                                     value={item.amount}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
-                                                    inputProps={{ step: "0.01", min: "0.01" }}
+                                                    slotProps={{ input: { inputProps: { step: "1", min: "0" } } }}
                                                     fullWidth
                                                     size="small"
                                                     disabled={isSubmitting}
