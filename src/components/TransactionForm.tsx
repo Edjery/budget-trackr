@@ -283,8 +283,27 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ isSubmitting }
                                                     fullWidth
                                                     size="small"
                                                     value={item.name}
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur}
+                                                    onChange={(e) => {
+                                                        const trimmedValue = e.target.value.trim();
+                                                        handleChange({
+                                                            target: {
+                                                                name: `items.${index}.name`,
+                                                                value: trimmedValue,
+                                                            },
+                                                        });
+                                                    }}
+                                                    onBlur={(e) => {
+                                                        const trimmedValue = e.target.value.trim();
+                                                        if (trimmedValue !== e.target.value) {
+                                                            handleChange({
+                                                                target: {
+                                                                    name: `items.${index}.name`,
+                                                                    value: trimmedValue,
+                                                                },
+                                                            });
+                                                        }
+                                                        handleBlur(e);
+                                                    }}
                                                     disabled={isSubmitting}
                                                 />
                                                 {touched.items?.[index]?.name &&
