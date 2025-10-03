@@ -53,7 +53,7 @@ export const DateSearchBar = ({ onDateChange, dateRange }: DateSearchBarProps) =
                                 placeholder: t("dateRange.earliest"),
                             },
                             actionBar: {
-                                actions: ["clear"],
+                                actions: ["clear", "today"],
                             },
                         }}
                         localeText={{
@@ -70,7 +70,7 @@ export const DateSearchBar = ({ onDateChange, dateRange }: DateSearchBarProps) =
                                 placeholder: t("dateRange.latest"),
                             },
                             actionBar: {
-                                actions: ["clear"],
+                                actions: ["clear", "today"],
                             },
                         }}
                         minDate={start || undefined}
