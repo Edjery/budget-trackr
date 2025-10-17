@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { useDataManagement } from "../hooks/useDataManagement";
+import { useTranslation } from "react-i18next";
 
 interface DataManagementDialogProps {
     open: boolean;
@@ -19,6 +20,7 @@ interface DataManagementDialogProps {
 }
 
 const DataManagementDialog: React.FC<DataManagementDialogProps> = ({ open, onClose }) => {
+    const { t } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { exportAllData, importAllData } = useDataManagement();
     const [isExporting, setIsExporting] = useState(false);
@@ -69,10 +71,10 @@ const DataManagementDialog: React.FC<DataManagementDialogProps> = ({ open, onClo
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showSnackbar("Data exported successfully!", "success");
+            showSnackbar(t("dataManagement.export.success"), "success");
         } catch (error) {
             console.error("Error exporting data:", error);
-            showSnackbar("Failed to export data. Please try again.", "error");
+            showSnackbar(t("dataManagement.export.error"), "error");
         } finally {
             setIsExporting(false);
         }
@@ -87,11 +89,11 @@ const DataManagementDialog: React.FC<DataManagementDialogProps> = ({ open, onClo
             try {
                 const data = JSON.parse(e.target?.result as string);
                 await importAllData(data);
-                showSnackbar("Data imported successfully!", "success");
+                showSnackbar(t("dataManagement.import.success"), "success");
                 setTimeout(() => window.location.reload(), 1500); // Give user time to see the success message
             } catch (error) {
                 console.error("Error importing data:", error);
-                showSnackbar("Failed to import data. The file might be corrupted or in an invalid format.", "error");
+                showSnackbar(t("dataManagement.import.error"), "error");
             }
         };
         reader.readAsText(file);
@@ -103,10 +105,10 @@ const DataManagementDialog: React.FC<DataManagementDialogProps> = ({ open, onClo
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-            <DialogTitle>Data Management</DialogTitle>
+            <DialogTitle>{t("dataManagement.title")}</DialogTitle>
             <DialogContent>
                 <Typography variant="body1" paragraph>
-                    Export your data to a backup file or import previously saved data.
+                    {t("dataManagement.description")}
                 </Typography>
 
                 <Box sx={{ display: "flex", gap: 2, mt: 2, mb: 1 }}>
@@ -117,7 +119,7 @@ const DataManagementDialog: React.FC<DataManagementDialogProps> = ({ open, onClo
                         disabled={isExporting}
                         fullWidth
                     >
-                        {isExporting ? "Exporting..." : "Export Data"}
+                        {isExporting ? t("dataManagement.export.exporting") : t("dataManagement.export.button")}
                     </Button>
 
                     <input
@@ -129,27 +131,27 @@ const DataManagementDialog: React.FC<DataManagementDialogProps> = ({ open, onClo
                         id="import-file"
                     />
                     <Button variant="outlined" color="primary" component="label" htmlFor="import-file" fullWidth>
-                        Import Data
+                        {t("dataManagement.import.button")}
                     </Button>
                 </Box>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} color="primary">
-                    Close
+                    {t("dataManagement.close")}
                 </Button>
             </DialogActions>
 
             <Dialog open={isExportConfirmOpen} onClose={handleExportCancel}>
-                <DialogTitle>Confirm Export</DialogTitle>
+                <DialogTitle>{t("dataManagement.export.confirm.title")}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>This will export your data to a JSON file. Continue?</DialogContentText>
+                    <DialogContentText>{t("dataManagement.export.confirm.message")}</DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleExportCancel} color="primary">
-                        Cancel
+                        {t("dataManagement.cancel")}
                     </Button>
                     <Button onClick={handleExportConfirm} color="primary" variant="contained" autoFocus>
-                        Export
+                        {t("dataManagement.export.button")}
                     </Button>
                 </DialogActions>
             </Dialog>

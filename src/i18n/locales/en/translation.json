@@ -72,6 +72,27 @@
       "close": "Close"
     }
   },
+  "dataManagement": {
+    "title": "Data Management",
+    "description": "Export your data to a backup file or import previously saved data.",
+    "export": {
+      "button": "Export Data",
+      "exporting": "Exporting...",
+      "success": "Data exported successfully!",
+      "error": "Failed to export data. Please try again.",
+      "confirm": {
+        "title": "Confirm Export",
+        "message": "This will export your data to a JSON file. Continue?"
+      }
+    },
+    "import": {
+      "button": "Import Data",
+      "success": "Data imported successfully!",
+      "error": "Failed to import data. The file might be corrupted or in an invalid format."
+    },
+    "close": "Close",
+    "cancel": "Cancel"
+  },
   "transaction": {
     "details": "Transaction Details",
     "title": "Transaction",

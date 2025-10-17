@@ -26,6 +26,27 @@
     "save": "I-save",
     "cancel": "Kanselahin"
   },
+  "dataManagement": {
+    "title": "Pamamahala ng Data",
+    "description": "I-export ang iyong data sa backup file o mag-import ng nakaraang na-save na data.",
+    "export": {
+      "button": "I-export ang Data",
+      "exporting": "Ini-export...",
+      "success": "Matagumpay na na-export ang data!",
+      "error": "Hindi na-export ang data. Pakisubukan muli.",
+      "confirm": {
+        "title": "Kumpirmahin ang Pag-export",
+        "message": "Ito ay mag-e-export ng iyong data sa JSON file. Itutuloy ba?"
+      }
+    },
+    "import": {
+      "button": "Mag-import ng Data",
+      "success": "Matagumpay na na-import ang data!",
+      "error": "Hindi na-import ang data. Ang file ay maaaring sira o may maling format."
+    },
+    "close": "Isara",
+    "cancel": "Kanselahin"
+  },
   "summary": {
     "balance": "Balanse",
     "earnings": "Kabuuang Kita",
