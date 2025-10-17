@@ -9,7 +9,6 @@ import { useTransactionEdit } from "../hooks/useTransactionEdit";
 import { useTransactionForm } from "../hooks/useTransactionForm";
 import { useTransactions } from "../hooks/useTransactions";
 import type { FormValues } from "../types";
-import DataManagement from "./DataManagement";
 import { DateSearchBar } from "./DateSearchBar";
 import DebugView from "./DebugView";
 import { SummaryCards } from "./SummaryCards";
@@ -34,6 +33,7 @@ const AppContent = () => {
     });
 
     const { transactions, updateTransaction, addTransaction, deleteTransaction } = useTransactions();
+    const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
 
     // Filter transactions based on date range if provided
     const filteredTransactions = (() => {
@@ -90,14 +90,12 @@ const AppContent = () => {
         >
             <SummaryCards totalEarnings={totalEarnings} totalSpendings={totalSpendings} balance={balance} />
             <DateSearchBar dateRange={dateRange} onDateChange={setDateRange} />
-
             <TransactionList
                 transactions={filteredTransactions}
                 onEditTransaction={handleEditTransaction}
                 onDeleteTransaction={handleDeleteTransaction}
                 onAddTransaction={handleOpenAddDialog}
             />
-
             <TransactionFormDialog
                 openDialog={isEditDialogOpen}
                 handleCloseDialog={handleCloseEditDialog}
@@ -105,7 +103,6 @@ const AppContent = () => {
                 onSubmit={handleSaveTransaction}
                 isEditing={!!initialFormValues}
             />
-
             <TransactionFormDialog
                 openDialog={isAddDialogOpen}
                 handleCloseDialog={handleCloseAddDialog}
@@ -133,9 +130,7 @@ const AppContent = () => {
                 onSubmit={handleAddTransaction}
                 isEditing={false}
             />
-
             <DebugView />
-            <DataManagement />
         </Box>
     );
 };

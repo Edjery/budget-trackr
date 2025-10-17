@@ -1,9 +1,10 @@
-import { AccountBalanceWallet, Settings, Brightness4, Brightness7 } from "@mui/icons-material";
-import { AppBar, Box, Toolbar, Typography, IconButton, Tooltip, useTheme } from "@mui/material";
+import { AccountBalanceWallet, Backup, Brightness4, Brightness7, Settings } from "@mui/icons-material";
+import { AppBar, Box, IconButton, Toolbar, Tooltip, Typography, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SettingsDialog } from "./settings/SettingsDialog";
 import type { AppTheme } from "../theme";
+import DataManagementDialog from "./DataManagementDialog";
+import { SettingsDialog } from "./settings/SettingsDialog";
 
 // Default props as constants
 export const DEFAULT_HEADER_TITLE = "Budgeting Budgeteer";
@@ -24,6 +25,8 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 }) => {
     const { t } = useTranslation();
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
+
     const theme = useTheme() as AppTheme;
 
     return (
@@ -76,6 +79,16 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                     </Typography>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Tooltip title="Data Management">
+                        <IconButton
+                            color="inherit"
+                            onClick={() => setIsDataManagementOpen(true)}
+                            aria-label="Open data management"
+                            size="large"
+                        >
+                            <Backup />
+                        </IconButton>
+                    </Tooltip>
                     <Tooltip title={darkMode ? t("settings.appearance.light") : t("settings.appearance.dark")}>
                         <IconButton
                             color="inherit"
@@ -103,6 +116,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 </Box>
             </Toolbar>
             <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+            <DataManagementDialog open={isDataManagementOpen} onClose={() => setIsDataManagementOpen(false)} />
         </AppBar>
     );
 };
