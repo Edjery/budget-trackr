@@ -4,11 +4,13 @@ import { Box, Button, Collapse } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSettings from "../hooks/useSettings";
+import { useTransactions } from "../hooks/useTransactions";
 
-const DebugView = ({ data }: { data: any }) => {
+const DebugView = () => {
     const isDebug = import.meta.env.VITE_ENVIRONMENT == "dev";
     if (!isDebug) return null;
 
+    const { transactions } = useTransactions();
     const { settings } = useSettings();
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
@@ -43,7 +45,7 @@ const DebugView = ({ data }: { data: any }) => {
                     }}
                 >
                     {JSON.stringify(settings, null, 2)}
-                    {JSON.stringify(data, null, 2)}
+                    {JSON.stringify(transactions, null, 2)}
                 </Box>
             </Collapse>
         </Box>

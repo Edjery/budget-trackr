@@ -10,6 +10,7 @@ import { useTransactionForm } from "../hooks/useTransactionForm";
 import { useTransactions } from "../hooks/useTransactions";
 import type { FormValues } from "../types";
 import { DateSearchBar } from "./DateSearchBar";
+import DebugView from "./DebugView";
 import { SummaryCards } from "./SummaryCards";
 import TransactionFormDialog from "./TransactionFormDialog";
 import { TransactionList } from "./TransactionList";
@@ -131,6 +132,8 @@ const AppContent = () => {
                 onSubmit={handleAddTransaction}
                 isEditing={false}
             />
+
+            <DebugView />
         </Box>
     );
 };

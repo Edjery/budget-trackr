@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import usePagination from "../hooks/usePagination";
 import type { Transaction } from "../types";
-import DebugView from "./DebugView";
 import { TransactionCard } from "./TransactionCard";
 import TransactionDetailsDialog from "./TransactionDetailsDialog";
 
@@ -117,7 +116,6 @@ export const TransactionList = ({
                     )}
                 </CardContent>
             </Card>
-            <DebugView data={transactions} />
             {selectedDate && (
                 <TransactionDetailsDialog
                     open={isDialogOpen}
