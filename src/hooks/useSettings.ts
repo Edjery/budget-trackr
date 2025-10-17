@@ -4,34 +4,35 @@ import { DEFAULT_USER_SETTINGS } from "../types/userSettings";
 
 const SETTINGS_QUERY_KEY = ['settings'];
 
-const loadSettings = (): UserSettings => {
-    try {
-        const savedSettings = localStorage.getItem('userSettings');
-        if (savedSettings) {
-            const parsed = JSON.parse(savedSettings);
-            // Merge with defaults to ensure all required fields are present
-            return {
-                ...DEFAULT_USER_SETTINGS,
-                ...parsed,
-                appearance: {
-                    ...DEFAULT_USER_SETTINGS.appearance,
-                    ...(parsed.appearance || {})
-                },
-                currency: {
-                    ...DEFAULT_USER_SETTINGS.currency,
-                    ...(parsed.currency || {})
-                }
-            };
-        }
-    } catch (error) {
-        console.error('Error loading settings from localStorage:', error);
-    }
-    return DEFAULT_USER_SETTINGS;
-};
 
 export const useSettings = () => {
     const queryClient = useQueryClient();
 
+    const loadSettings = (): UserSettings => {
+        try {
+            const savedSettings = localStorage.getItem('userSettings');
+            if (savedSettings) {
+                const parsed = JSON.parse(savedSettings);
+                // Merge with defaults to ensure all required fields are present
+                return {
+                    ...DEFAULT_USER_SETTINGS,
+                    ...parsed,
+                    appearance: {
+                        ...DEFAULT_USER_SETTINGS.appearance,
+                        ...(parsed.appearance || {})
+                    },
+                    currency: {
+                        ...DEFAULT_USER_SETTINGS.currency,
+                        ...(parsed.currency || {})
+                    }
+                };
+            }
+        } catch (error) {
+            console.error('Error loading settings from localStorage:', error);
+        }
+        return DEFAULT_USER_SETTINGS;
+    };
+    
     // Get settings query
     const { data: settings = DEFAULT_USER_SETTINGS, isLoading, error } = useQuery<UserSettings>({
         queryKey: SETTINGS_QUERY_KEY,
@@ -89,6 +90,26 @@ export const useSettings = () => {
         });
     };
 
+    const importSettingsMutation = useMutation({
+        mutationFn: async (settings: UserSettings) => {
+            try {
+                localStorage.setItem('userSettings', JSON.stringify(settings));
+                return settings;
+            } catch (error) {
+                console.error('Failed to save settings to localStorage:', error);
+                throw error;
+            }
+        },
+        onSuccess: () => {
+            // Invalidate and refetch settings
+            queryClient.invalidateQueries({ queryKey: ['settings'] });
+        }
+    });
+
+    const importSettings = (settings: UserSettings) => {
+        return importSettingsMutation.mutateAsync(settings);
+    }
+
     return {
         settings,
         updateSettings,
@@ -97,7 +118,8 @@ export const useSettings = () => {
         updateLanguage,
         isLoading,
         isUpdating,
-        error
+        error,
+        importSettings,
     };
 };
 

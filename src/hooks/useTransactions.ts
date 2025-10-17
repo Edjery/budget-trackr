@@ -174,6 +174,29 @@ export const useTransactions = () => {
       queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
     },
   });
+  
+
+
+    const importTransactionsMutation = useMutation({
+        mutationFn: async (transactions: string) => {
+            try {
+                localStorage.setItem('transactions', transactions);
+                return JSON.parse(transactions) as Transaction[];
+            } catch (error) {
+                console.error('Failed to save transactions to localStorage:', error);
+                throw error;
+            }
+        },
+        onSuccess: () => {
+            // Invalidate and refetch transactions
+            queryClient.invalidateQueries({ queryKey: TRANSACTIONS_QUERY_KEY });
+        }
+    });
+
+    // Update the importTransactions function to use the mutation
+    const importTransactions = (transactions: string) => {
+        return importTransactionsMutation.mutateAsync(transactions);
+    }
 
   return {
     transactions,
@@ -181,5 +204,6 @@ export const useTransactions = () => {
     addTransaction,
     updateTransaction,
     deleteTransaction,
+    importTransactions,
   };
 };

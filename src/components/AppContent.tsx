@@ -9,6 +9,7 @@ import { useTransactionEdit } from "../hooks/useTransactionEdit";
 import { useTransactionForm } from "../hooks/useTransactionForm";
 import { useTransactions } from "../hooks/useTransactions";
 import type { FormValues } from "../types";
+import DataManagement from "./DataManagement";
 import { DateSearchBar } from "./DateSearchBar";
 import DebugView from "./DebugView";
 import { SummaryCards } from "./SummaryCards";
@@ -134,6 +135,7 @@ const AppContent = () => {
             />
 
             <DebugView />
+            <DataManagement />
         </Box>
     );
 };
