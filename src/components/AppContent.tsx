@@ -33,7 +33,6 @@ const AppContent = () => {
     });
 
     const { transactions, updateTransaction, addTransaction, deleteTransaction } = useTransactions();
-    const [isDataManagementOpen, setIsDataManagementOpen] = useState(false);
 
     // Filter transactions based on date range if provided
     const filteredTransactions = (() => {
