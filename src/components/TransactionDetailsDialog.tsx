@@ -20,6 +20,8 @@ import {
     TableHead,
     TableRow,
     Typography,
+    useMediaQuery,
+    useTheme,
 } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
@@ -50,6 +52,9 @@ export const TransactionDetailsDialog = ({
     onAddTransaction,
     transactions,
 }: TransactionDetailsDialogProps) => {
+    const theme = useTheme();
+
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const { t } = useTranslation();
     const { settings } = useSettings();
     const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
@@ -269,16 +274,38 @@ export const TransactionDetailsDialog = ({
                                 <AddIcon />
                             </IconButton>
                         )}
-                        {onDelete && selectedDateTransactions.length > 0 && (
-                            <Button
-                                onClick={handleDeleteAllClick}
-                                color="error"
-                                variant="contained"
-                                startIcon={<DeleteIcon />}
-                            >
-                                {t("transaction.deleteAll")}
-                            </Button>
-                        )}
+                        {onDelete &&
+                            selectedDateTransactions.length > 0 &&
+                            (isMobile ? (
+                                <IconButton
+                                    onClick={handleDeleteAllClick}
+                                    color="error"
+                                    sx={{
+                                        borderRadius: 1,
+                                        width: 40,
+                                        height: 40,
+                                        bgcolor: "error.main",
+                                        color: "error.contrastText",
+                                        "&:hover": {
+                                            bgcolor: "error.dark",
+                                            transform: "scale(1.05)",
+                                        },
+                                        transition: "all 0.2s ease-in-out",
+                                    }}
+                                    title={t("transaction.deleteAll")}
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            ) : (
+                                <Button
+                                    onClick={handleDeleteAllClick}
+                                    color="error"
+                                    variant="contained"
+                                    startIcon={<DeleteIcon />}
+                                >
+                                    {isMobile ? "" : t("transaction.deleteAll")}
+                                </Button>
+                            ))}
                     </Box>
                     <Button variant="outlined" onClick={onClose}>
                         {t("common.actions.close")}
